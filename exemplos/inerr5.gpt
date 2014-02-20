@@ -1,0 +1,25 @@
+algoritmo idade;
+
+função retorna_1() : inteiro
+início
+	retorne 1;
+fim
+fim-função
+
+função retorna_1() : inteiro
+início
+	retorne 1;
+fim
+fim-função
+
+//variáveis
+variáveis
+	i: inteiro;
+fim-variáveis
+
+//inicio do programa
+início
+	i := retorna_1();
+fim
+
+

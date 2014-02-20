@@ -1,0 +1,30 @@
+algoritmo fatorial_recursivo;
+
+função quadrado(x: inteiro) : inteiro
+início
+        retorne x * x;
+fim
+fim-função
+
+função cubo(x: inteiro) : inteiro
+início
+        retorne x * x * x;
+fim
+fim-função
+
+variáveis
+    q : inteiro;
+    texto : literal;
+fim-variáveis
+
+início
+    texto := "Digite um número:";
+    imprima(texto);
+    leia(q);
+    imprima(quadrado(q));
+
+    texto := "Digite um número:";
+    imprima(texto);
+    leia(q);
+    imprima(cubo(q));
+fim

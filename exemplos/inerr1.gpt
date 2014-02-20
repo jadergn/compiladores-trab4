@@ -1,0 +1,20 @@
+algoritmo idade;
+
+função faixa_etaria(idade: inteiro) : literal
+início
+	retorne "1";
+fim
+fim-função
+
+//variáveis
+variáveis
+	idade, i, j, k, l: inteiro;
+	nome: literal;
+fim-variáveis
+
+//inicio do programa
+início
+	//operador SE / ENTÃO / SENÃO
+	imprima(faixa_etaria(idade));
+fim
+

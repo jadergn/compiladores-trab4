@@ -1,0 +1,50 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%opening
+\title{3º Trabalho de Compiladores - Analisador Semântico}
+\author{Jader Gomes Nascimento e Fernando Guimarães Pinheiro}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Documentação referente à terceira parte do trabalho de compiladores, que consiste em um analisador semântico.
+\end{abstract}
+
+\section{Introdução}
+O objetivo deste trabalho é estabelecer um analisador semântico para a linguagem GPortugol. O analisador semântico é a terceira parte
+de um compilador, e sua função é verificar se as variáveis utilizadas foram declaradas, se há variáveis redeclaradas, se há variáveis declaradas e não utilizadas, se os tipos associados às variáveis e ao valor associado são compatíveis, se o número de argumentos (aridade) de uma função ou procedimento está correto, se o tipo associado ao valor de retorno de uma função está correto e se os tipos associados aos argumentos de uma função ou procedimento estão corretos.
+
+
+\section{Analizador semântico}
+Para o desenvolvimento do trabalho foram utilizados dois TAD's: tabela hash e pilha para aulixio.
+
+\section{Tabela Hash}
+Principal funcionalidade do trabalho. Seu tamanho é 97. É implementado para isso o TAD lista, que é uma lista genérica, ou seja, é utilizada a mesma estrutura para variáveis e funções.
+A tabela hash trata-se de um de vetor com tamanho 97, onde cada posição do vetor é uma lista.
+
+Além dos TAD's citados acima outros dois TAD's são usados: Variável e Função. Neles são guardadas as informações (e valores no caso das variáveis) que foram declaradas em cada programa.
+
+\section{Pilha}
+Trata-se de uma pilha normal e é usado para verificações de tipos em expressões.
+Apesar de não ter tamanho limite de itens são usados no máximo dois. A cada identificador ou valor primitivo encontrado nós obtemos o tipo desse termo e inserimos na pilha e fazemos uma verificação. Sempre que o segundo item é inserido é verificado a compatibilidade dos dois itens existentes e caso isso não ocorra é retornado um erro. Caso contrario fica apenas um item com o tipo compatível (no caso de operações com inteiro e real).
+
+Poderia ter sido usado de uma maneira diferente. No caso da declarações de variáveis onde so obtemos o tipo das variáveis depois ter termos por todas elas.
+
+\section{Observações}
+  \begin{itemize}
+    \item Pequenas alterações foram feitas no analisador sintático
+    \item Foi adicionado um novo token na linguagem que indica o fim da função: fim-função.
+    \item Funções obrigatoriamente devem ser declaradas antes do bloco inicio principal e antes do bloco de declaração de variáveis.
+    \item Tipo booleano não aceito.
+    \item É feito verificação de tipos nas expressões com coersão se necessário.
+    \item Expressão dentro de expressões não é aceito.
+  \end{itemize}
+
+\section{Exemplos}
+Nos exemplos, foi explorado diversas situações para os diversos tipos de usuários. Foram criadas 10 situações, 5 situações corretas e 5
+situações erradas, tentando utilizar todas as funções que foram definadas.
+
+\end{document}

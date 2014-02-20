@@ -1,0 +1,22 @@
+algoritmo idade;
+
+função retorna_1() : inteiro
+início
+	retorne 1;
+fim
+fim-função
+
+//variáveis
+variáveis
+	idade, i, j: inteiro;
+	total : real;
+fim-variáveis
+
+//inicio do programa
+início
+	total := 1 + 2.5;
+	total := retorna_1(i) + 2.5;
+	total := total + 1;
+fim
+
+

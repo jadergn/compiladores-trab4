@@ -1,0 +1,60 @@
+algoritmo soma;
+
+função soma(x: real, y: real) : real
+início
+	retorne x + y;
+fim
+fim-função
+
+função sub(x: real, y: real) : real
+início
+	retorne x - y;
+fim
+fim-função
+
+função mult(x: real, y: real) : real
+início
+	retorne x * y;
+fim
+fim-função
+
+função div(x: real, y: real) : real
+início
+	retorne x / y;
+fim
+fim-função
+
+variáveis
+	a: real;
+	b: real;
+	op: literal;
+	texto : literal;
+fim-variáveis
+
+início
+	texto := "Digite o primeiro número";
+	imprima(texto);
+	leia(a);
+	texto := "Digite o segundo número";
+	leia(b);
+	texto := "Digite a operação (soma/sub/mult/div):";
+	leia(op);
+	escolha (x)
+		caso "soma" :
+			imprima(soma(a, b));
+			para;
+		caso "sub" :
+			imprima(sub(a, b));
+			para;
+		caso "mult" :
+			imprima(mult(a, b));
+			para;
+		caso "div" :
+			imprima(div(a, b));
+			para;
+		default:
+			imprima("Operação inválida");
+			para;
+	fim-escolha
+
+fim
