@@ -741,7 +741,7 @@ main(){
 	insere_parametro_funcao(tab_funcoes,"media",tipo_parametros);
 	
 	pilha_exp = pilha_constroi();
-	
+	//arvore
 	a = inicializa_arvore();
 	
 	insere_atribuicao(a,"teste", "int", "100");
