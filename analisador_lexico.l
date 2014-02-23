@@ -3,10 +3,10 @@
 #include <string.h>
 #include "hash.h"
 #include "arvore.h"
-#include "atribuicao.h"
 int i = 0;
 int num_linha = 1;
 int escopo;
+char operacao;
 char c;
 char comentario[2000];
 char identificador[100];
@@ -76,10 +76,10 @@ default			{return token_pr_default;}
 ("+"|-)?[0-9]"."[0-9]+ 		{tipo =3; return token_real;}
 \'([^\\]|\\.)?\'			{tipo =1;return token_caractere;}
 \"([^\"\\\n\r]|\\.)*\"		{tipo =2; return token_literal;}
-"+"							{return token_soma;}
-"-"							{return token_subtracao;}
-"\/"						{return token_divisao;}
-"\*"						{return token_multiplicacao;}
+"+"							{operacao = '+';return token_soma;}
+"-"							{operacao = '-';return token_subtracao;}
+"\/"						{operacao = '/';return token_divisao;}
+"\*"						{operacao = '*';return token_multiplicacao;}
 "++"						{return token_incrementador;}
 "%"							{return token_modulo;}
 ">"							{return token_maior;}

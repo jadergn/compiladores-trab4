@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include "hash.h"
 #include "arvore.h"
-#include "atribuicao.h"
 
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *a;
+Arvore *a,*aux;
+
+Arvore_pilha *pilha_arvore;
+
 
 Pilha *pilha_exp;
 int expressao_tipo;
@@ -18,6 +20,7 @@ int tipo_parametros[10];
 int retorno_func;
 char valor_esquerda[100];
 extern int tipo;
+extern char operacao;
 extern char * yytext;
 extern char identificador[100];
 extern char funcao[100];
@@ -277,6 +280,7 @@ comando
 valor_esquerda
 : token_identificador
 {
+	//printf("%s\n",identificador);
 	//verifica se a variavel que estao recebendo atribuicao foi declarada, se sim usada=1, var=NULL nao foi encontrada a variavel, logo ela nao foi declarada
 	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
@@ -287,7 +291,16 @@ valor_esquerda
 		strcpy(valor_esquerda,identificador);
 		set_usada(var);
 	}
-	var = inicializa();
+	
+	//aqui empilha primeiro a atribuicao e depois insere o valor_esquerda
+	//imprime_hash(tab_variaveis);
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("atribuicao",":="));
+	//imprime_hash(tab_variaveis);
+	//printf("-- %d\n",get_tipo(var));
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("variavel",identificador));
+	
+	var = inicializa();	
+	
 }
 | token_identificador matriz_colchetes
 ;
@@ -295,12 +308,26 @@ valor_esquerda
 atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
 {
+	
 	var =busca(tab_variaveis,valor_esquerda, escopo);
+	arvore_pilha_imprime(pilha_arvore);
+	//if(var==NULL)
+	//	printf("Ta vazio\n");
+	//printf("--%s\n",get_nome(var));
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
+	//arvore_pilha_imprime(pilha_arvore);
+	a = insere_pilha_arvore_atribuicao(a, pilha_arvore);
+	//arvore_imprime(a);
+	for(aux=a; aux!=NULL; aux=get_prox(aux)){
+		//arvore_imprime(aux);
+	}
+	
+	pilha_arvore = inicializa_pilha();
 	var=inicializa();
+	
 }
 ;
 
@@ -404,12 +431,21 @@ termo_6
 
 termo_7
 : termo_7 token_soma termo_8
+{
+	//printf("Soma\n");
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","+"));
+}
 | termo_7 token_subtracao termo_8
 | termo_8
 ;
 
 termo_8
 : termo_8 token_multiplicacao termo_9
+{
+	//printf("Multiplicao\n");
+	
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","*"));
+}
 | termo_8 token_divisao termo_9
 | termo_8 token_modulo termo_9
 | termo_9
@@ -438,11 +474,12 @@ termo_9
 			exit(0);
 		}
 	}
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("variavel",identificador));
 	var = inicializa();
 }
 | valor_primitivo
 {
-
+	//printf("op = %c\n",operacao);
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
 	}
@@ -450,6 +487,18 @@ termo_9
 		printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
 		exit(0);
 	}
+	if (tipo ==0)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("inteiro",yytext));
+	else if (tipo ==1)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("caracter",yytext));
+	else if (tipo ==2)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("literal",yytext));	
+	else if (tipo ==3)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("real",yytext));	
+	else if (tipo ==4)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("booleano",yytext));	
+	//printf("tipo = %d yytext =%s\n",tipo,yytext);
+	//arvore_pilha_imprime(pilha_arvore);
 }
 | chamada_funcao
 {
@@ -743,10 +792,14 @@ main(){
 	pilha_exp = pilha_constroi();
 	//arvore
 	a = inicializa_arvore();
-	
-	insere_atribuicao(a,"teste", "int", "100");
-	
-	
+	pilha_arvore = inicializa_pilha();
+	//a = insere_atribuicao(a,"teste", "int", "100");
+	//a = insere_atribuicao(a,"teste1", "real", "100.100");
+	//a = insere_atribuicao(a,"teste2", "char", "a");
+	//a = insere_atribuicao(a,"teste3", "booleano", "true");
+	//for(aux=a; aux!=NULL; aux=get_prox(aux)){
+	//	arvore_imprime(aux);
+	//}
 	yyparse();
 }
 

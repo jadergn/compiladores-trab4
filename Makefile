@@ -5,8 +5,7 @@ analisador:
 	bison -v analisador_sintatico.y
 	gcc -c hash.c
 	gcc -c arvore.c
-	gcc -c atribuicao.c
-	gcc -o trab3 analisador_sintatico.tab.c -lfl hash.o arvore.o atribuicao.o
+	gcc -o trab3 analisador_sintatico.tab.c -lfl hash.o arvore.o
 	
 relatorio:
 	pdflatex trab3.tex

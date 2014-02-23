@@ -5,47 +5,13 @@ Código que recebe um inteiro e diz se esse inteiro, que é uma idade, é adulto
 //inicio do algoritomo
 algoritmo idade;
 
-função faixa_etaria(idade: inteiro) : literal
-início
-	se idade >= 18 então
-		se idade < 60 então
-			retorne "adulto";
-		senão
-			retorne "idoso";
-		fim-se
-	senão
-		retorne "jovem";
-	fim-se
-fim
-fim-função
-
-função faixa_etaria_2() : literal
-início
-	retorne "2";
-fim
-fim-função
-
-função faixa_etaria_3() : literal
-início
-	retorne "3";
-fim
-fim-função
-
 //variáveis
 variáveis
-	idade: inteiro;
-	nome: literal;
+	idade,a: inteiro;
 fim-variáveis
 
 //inicio do programa
 início
-	//imprima("Digita seu nome:");
-	leia(nome);
-    
-	//imprima(nome, ", digite sua idade:");
-	leia(idade);
-
-	//operador SE / ENTÃO / SENÃO
-	imprima(faixa_etaria(idade));
+	idade :=10;
 fim
 

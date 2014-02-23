@@ -697,10 +697,10 @@ char *yytext;
 #include <string.h>
 #include "hash.h"
 #include "arvore.h"
-#include "atribuicao.h"
 int i = 0;
 int num_linha = 1;
 int escopo;
+char operacao;
 char c;
 char comentario[2000];
 char identificador[100];
@@ -1243,22 +1243,22 @@ YY_RULE_SETUP
 case 54:
 YY_RULE_SETUP
 #line 79 "analisador_lexico.l"
-{return token_soma;}
+{operacao = '+';return token_soma;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 80 "analisador_lexico.l"
-{return token_subtracao;}
+{operacao = '-';return token_subtracao;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 81 "analisador_lexico.l"
-{return token_divisao;}
+{operacao = '/';return token_divisao;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 82 "analisador_lexico.l"
-{return token_multiplicacao;}
+{operacao = '*';return token_multiplicacao;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP

@@ -3,8 +3,11 @@
 #include <string.h>
 
 typedef struct arvore Arvore;
+typedef struct arvore_pilha Arvore_pilha;
+
 
 Arvore* inicializa_arvore (void);
+Arvore *cria_arvore(char tipo[], char valor[]);
 void set_tipo_arvore(Arvore *a,char tipo[]);
 void set_valor_arvore(Arvore *a,char comando[]);
 void set_f1(Arvore *a,Arvore *f1);
@@ -20,3 +23,11 @@ Arvore* get_f2(Arvore *a);
 Arvore* get_f3(Arvore *a);
 Arvore* get_f4(Arvore *a);
 Arvore* get_prox(Arvore *a);
+
+void arvore_imprime(Arvore* a);
+//Arvore* insere_atribuicao(Arvore *a, char variavel[], char tipo[],char valor[]);
+Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p);
+
+Arvore_pilha* inicializa_pilha();
+Arvore_pilha* insere_pilha(Arvore_pilha *pilha, Arvore *a);
+void arvore_pilha_imprime(Arvore_pilha *a);

@@ -71,12 +71,14 @@
 #include <stdio.h>
 #include "hash.h"
 #include "arvore.h"
-#include "atribuicao.h"
 
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *a;
+Arvore *a,*aux;
+
+Arvore_pilha *pilha_arvore;
+
 
 Pilha *pilha_exp;
 int expressao_tipo;
@@ -87,6 +89,7 @@ int tipo_parametros[10];
 int retorno_func;
 char valor_esquerda[100];
 extern int tipo;
+extern char operacao;
 extern char * yytext;
 extern char identificador[100];
 extern char funcao[100];
@@ -96,7 +99,7 @@ extern int escopo;
 
 
 /* Line 268 of yacc.c  */
-#line 100 "analisador_sintatico.tab.c"
+#line 103 "analisador_sintatico.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -227,7 +230,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 231 "analisador_sintatico.tab.c"
+#line 234 "analisador_sintatico.tab.c"
 
 #ifdef short
 # undef short
@@ -576,19 +579,19 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   125,   125,   126,   130,   141,   142,   143,   147,   163,
-     182,   183,   187,   192,   200,   204,   208,   212,   216,   220,
-     224,   225,   229,   230,   231,   232,   233,   238,   243,   247,
-     252,   256,   257,   261,   268,   269,   270,   271,   272,   273,
-     274,   278,   292,   296,   308,   309,   314,   318,   319,   323,
-     324,   325,   330,   331,   335,   339,   340,   344,   345,   346,
-     350,   356,   362,   371,   372,   373,   377,   378,   382,   383,
-     387,   388,   392,   393,   394,   398,   399,   400,   401,   402,
-     406,   407,   408,   412,   413,   414,   415,   419,   420,   421,
-     422,   423,   443,   454,   467,   483,   484,   485,   486,   487,
-     488,   492,   507,   524,   536,   548,   560,   572,   588,   604,
-     623,   630,   640,   641,   645,   659,   668,   674,   683,   684,
-     688,   694
+       0,   128,   128,   129,   133,   144,   145,   146,   150,   166,
+     185,   186,   190,   195,   203,   207,   211,   215,   219,   223,
+     227,   228,   232,   233,   234,   235,   236,   241,   246,   250,
+     255,   259,   260,   264,   271,   272,   273,   274,   275,   276,
+     277,   281,   305,   309,   335,   336,   341,   345,   346,   350,
+     351,   352,   357,   358,   362,   366,   367,   371,   372,   373,
+     377,   383,   389,   398,   399,   400,   404,   405,   409,   410,
+     414,   415,   419,   420,   421,   425,   426,   427,   428,   429,
+     433,   438,   439,   443,   449,   450,   451,   455,   456,   457,
+     458,   459,   480,   503,   516,   532,   533,   534,   535,   536,
+     537,   541,   556,   573,   585,   597,   609,   621,   637,   653,
+     672,   679,   689,   690,   694,   708,   717,   723,   732,   733,
+     737,   743
 };
 #endif
 
@@ -1786,7 +1789,7 @@ yyreduce:
         case 4:
 
 /* Line 1806 of yacc.c  */
-#line 131 "analisador_sintatico.y"
+#line 134 "analisador_sintatico.y"
     {
 //apagando o vetor expressao
 for(i=0;i<2000;i++){
@@ -1798,7 +1801,7 @@ for(i=0;i<2000;i++){
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 148 "analisador_sintatico.y"
+#line 151 "analisador_sintatico.y"
     {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), crio uma lista antes, pois so aqui fica sabendo do tipo das variaveis
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
@@ -1819,7 +1822,7 @@ for(i=0;i<2000;i++){
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 164 "analisador_sintatico.y"
+#line 167 "analisador_sintatico.y"
     {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), cria uma lista antes pois so aqui fica sabendo do tipo das variaveis
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
@@ -1840,7 +1843,7 @@ for(i=0;i<2000;i++){
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 188 "analisador_sintatico.y"
+#line 191 "analisador_sintatico.y"
     {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
@@ -1850,7 +1853,7 @@ for(i=0;i<2000;i++){
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 193 "analisador_sintatico.y"
+#line 196 "analisador_sintatico.y"
     {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
@@ -1860,7 +1863,7 @@ for(i=0;i<2000;i++){
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 201 "analisador_sintatico.y"
+#line 204 "analisador_sintatico.y"
     {
 	retorno_func = 0;
 }
@@ -1869,7 +1872,7 @@ for(i=0;i<2000;i++){
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 205 "analisador_sintatico.y"
+#line 208 "analisador_sintatico.y"
     {
 	retorno_func = 3;
 }
@@ -1878,7 +1881,7 @@ for(i=0;i<2000;i++){
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 209 "analisador_sintatico.y"
+#line 212 "analisador_sintatico.y"
     {
 	retorno_func = 1;
 }
@@ -1887,7 +1890,7 @@ for(i=0;i<2000;i++){
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 213 "analisador_sintatico.y"
+#line 216 "analisador_sintatico.y"
     {
 	retorno_func = 2;
 }
@@ -1896,7 +1899,7 @@ for(i=0;i<2000;i++){
   case 27:
 
 /* Line 1806 of yacc.c  */
-#line 239 "analisador_sintatico.y"
+#line 242 "analisador_sintatico.y"
     {
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
@@ -1906,7 +1909,7 @@ for(i=0;i<2000;i++){
   case 29:
 
 /* Line 1806 of yacc.c  */
-#line 248 "analisador_sintatico.y"
+#line 251 "analisador_sintatico.y"
     {
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
@@ -1916,7 +1919,7 @@ for(i=0;i<2000;i++){
   case 33:
 
 /* Line 1806 of yacc.c  */
-#line 262 "analisador_sintatico.y"
+#line 265 "analisador_sintatico.y"
     {
 	//apaga o vetor de expressao
 	for(i=0;i<2000;i++){
@@ -1928,8 +1931,9 @@ for(i=0;i<2000;i++){
   case 41:
 
 /* Line 1806 of yacc.c  */
-#line 279 "analisador_sintatico.y"
+#line 282 "analisador_sintatico.y"
     {
+	//printf("%s\n",identificador);
 	//verifica se a variavel que estao recebendo atribuicao foi declarada, se sim usada=1, var=NULL nao foi encontrada a variavel, logo ela nao foi declarada
 	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
@@ -1940,28 +1944,51 @@ for(i=0;i<2000;i++){
 		strcpy(valor_esquerda,identificador);
 		set_usada(var);
 	}
-	var = inicializa();
+	
+	//aqui empilha primeiro a atribuicao e depois insere o valor_esquerda
+	//imprime_hash(tab_variaveis);
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("atribuicao",":="));
+	//imprime_hash(tab_variaveis);
+	//printf("-- %d\n",get_tipo(var));
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("variavel",identificador));
+	
+	var = inicializa();	
+	
 }
     break;
 
   case 43:
 
 /* Line 1806 of yacc.c  */
-#line 297 "analisador_sintatico.y"
+#line 310 "analisador_sintatico.y"
     {
+	
 	var =busca(tab_variaveis,valor_esquerda, escopo);
+	arvore_pilha_imprime(pilha_arvore);
+	//if(var==NULL)
+	//	printf("Ta vazio\n");
+	//printf("--%s\n",get_nome(var));
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
+	//arvore_pilha_imprime(pilha_arvore);
+	a = insere_pilha_arvore_atribuicao(a, pilha_arvore);
+	//arvore_imprime(a);
+	for(aux=a; aux!=NULL; aux=get_prox(aux)){
+		//arvore_imprime(aux);
+	}
+	
+	pilha_arvore = inicializa_pilha();
 	var=inicializa();
+	
 }
     break;
 
   case 60:
 
 /* Line 1806 of yacc.c  */
-#line 351 "analisador_sintatico.y"
+#line 378 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1972,7 +1999,7 @@ for(i=0;i<2000;i++){
   case 61:
 
 /* Line 1806 of yacc.c  */
-#line 357 "analisador_sintatico.y"
+#line 384 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1983,7 +2010,7 @@ for(i=0;i<2000;i++){
   case 62:
 
 /* Line 1806 of yacc.c  */
-#line 363 "analisador_sintatico.y"
+#line 390 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1991,10 +2018,31 @@ for(i=0;i<2000;i++){
 }
     break;
 
+  case 80:
+
+/* Line 1806 of yacc.c  */
+#line 434 "analisador_sintatico.y"
+    {
+	printf("Soma\n");
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","+"));
+}
+    break;
+
+  case 83:
+
+/* Line 1806 of yacc.c  */
+#line 444 "analisador_sintatico.y"
+    {
+	printf("Multiplicao\n");
+	
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","*"));
+}
+    break;
+
   case 91:
 
 /* Line 1806 of yacc.c  */
-#line 424 "analisador_sintatico.y"
+#line 460 "analisador_sintatico.y"
     {
 	//verifica se a variavel foi declarada
 	var =busca(tab_variaveis,identificador, escopo); 
@@ -2012,6 +2060,7 @@ for(i=0;i<2000;i++){
 			exit(0);
 		}
 	}
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("variavel",identificador));
 	var = inicializa();
 }
     break;
@@ -2019,9 +2068,9 @@ for(i=0;i<2000;i++){
   case 92:
 
 /* Line 1806 of yacc.c  */
-#line 444 "analisador_sintatico.y"
+#line 481 "analisador_sintatico.y"
     {
-
+	printf("op = %c\n",operacao);
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
 	}
@@ -2029,13 +2078,25 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Incompatibilidade de tipos na expressão.\n", num_linha);
 		exit(0);
 	}
+	if (tipo ==0)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("inteiro",yytext));
+	else if (tipo ==1)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("caracter",yytext));
+	else if (tipo ==2)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("literal",yytext));	
+	else if (tipo ==3)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("real",yytext));	
+	else if (tipo ==4)
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("booleano",yytext));	
+	//printf("tipo = %d yytext =%s\n",tipo,yytext);
+	//arvore_pilha_imprime(pilha_arvore);
 }
     break;
 
   case 93:
 
 /* Line 1806 of yacc.c  */
-#line 455 "analisador_sintatico.y"
+#line 504 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
@@ -2053,7 +2114,7 @@ for(i=0;i<2000;i++){
   case 94:
 
 /* Line 1806 of yacc.c  */
-#line 468 "analisador_sintatico.y"
+#line 517 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
@@ -2071,7 +2132,7 @@ for(i=0;i<2000;i++){
   case 101:
 
 /* Line 1806 of yacc.c  */
-#line 493 "analisador_sintatico.y"
+#line 542 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
@@ -2091,7 +2152,7 @@ for(i=0;i<2000;i++){
   case 102:
 
 /* Line 1806 of yacc.c  */
-#line 508 "analisador_sintatico.y"
+#line 557 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
@@ -2110,7 +2171,7 @@ for(i=0;i<2000;i++){
   case 103:
 
 /* Line 1806 of yacc.c  */
-#line 525 "analisador_sintatico.y"
+#line 574 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela, em funcoes o escopo precisa ser colocado mas nao eh usado
 	func = busca(tab_funcoes,"imprima",escopo);
@@ -2127,7 +2188,7 @@ for(i=0;i<2000;i++){
   case 104:
 
 /* Line 1806 of yacc.c  */
-#line 537 "analisador_sintatico.y"
+#line 586 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia",escopo);
@@ -2144,7 +2205,7 @@ for(i=0;i<2000;i++){
   case 105:
 
 /* Line 1806 of yacc.c  */
-#line 549 "analisador_sintatico.y"
+#line 598 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia_ln",escopo);
@@ -2161,7 +2222,7 @@ for(i=0;i<2000;i++){
   case 106:
 
 /* Line 1806 of yacc.c  */
-#line 561 "analisador_sintatico.y"
+#line 610 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"imprima_ln",escopo);
@@ -2178,7 +2239,7 @@ for(i=0;i<2000;i++){
   case 107:
 
 /* Line 1806 of yacc.c  */
-#line 573 "analisador_sintatico.y"
+#line 622 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"maximo",escopo);
@@ -2199,7 +2260,7 @@ for(i=0;i<2000;i++){
   case 108:
 
 /* Line 1806 of yacc.c  */
-#line 589 "analisador_sintatico.y"
+#line 638 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"minimo",escopo);
@@ -2220,7 +2281,7 @@ for(i=0;i<2000;i++){
   case 109:
 
 /* Line 1806 of yacc.c  */
-#line 605 "analisador_sintatico.y"
+#line 654 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"media",escopo);
@@ -2241,7 +2302,7 @@ for(i=0;i<2000;i++){
   case 110:
 
 /* Line 1806 of yacc.c  */
-#line 624 "analisador_sintatico.y"
+#line 673 "analisador_sintatico.y"
     {
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
@@ -2253,7 +2314,7 @@ for(i=0;i<2000;i++){
   case 111:
 
 /* Line 1806 of yacc.c  */
-#line 631 "analisador_sintatico.y"
+#line 680 "analisador_sintatico.y"
     {
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
@@ -2265,7 +2326,7 @@ for(i=0;i<2000;i++){
   case 114:
 
 /* Line 1806 of yacc.c  */
-#line 646 "analisador_sintatico.y"
+#line 695 "analisador_sintatico.y"
     {
 	tipo_parametros[qtd_parametros] = -1;
 	func = busca(tab_funcoes, funcao, escopo);
@@ -2284,7 +2345,7 @@ for(i=0;i<2000;i++){
   case 115:
 
 /* Line 1806 of yacc.c  */
-#line 660 "analisador_sintatico.y"
+#line 709 "analisador_sintatico.y"
     {
 	tipo_parametros[0] = -1;
 	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,0);
@@ -2295,7 +2356,7 @@ for(i=0;i<2000;i++){
   case 116:
 
 /* Line 1806 of yacc.c  */
-#line 669 "analisador_sintatico.y"
+#line 718 "analisador_sintatico.y"
     {
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -2306,7 +2367,7 @@ for(i=0;i<2000;i++){
   case 117:
 
 /* Line 1806 of yacc.c  */
-#line 675 "analisador_sintatico.y"
+#line 724 "analisador_sintatico.y"
     {
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -2317,7 +2378,7 @@ for(i=0;i<2000;i++){
   case 120:
 
 /* Line 1806 of yacc.c  */
-#line 689 "analisador_sintatico.y"
+#line 738 "analisador_sintatico.y"
     {
 	insere_variavel(tab_variaveis,identificador,tipo,0,escopo);
 	tipo_parametros[qtd_parametros] = tipo;
@@ -2328,7 +2389,7 @@ for(i=0;i<2000;i++){
   case 121:
 
 /* Line 1806 of yacc.c  */
-#line 695 "analisador_sintatico.y"
+#line 744 "analisador_sintatico.y"
     {
 	tipo_parametros[qtd_parametros] = tipo;
 	qtd_parametros++;
@@ -2338,7 +2399,7 @@ for(i=0;i<2000;i++){
 
 
 /* Line 1806 of yacc.c  */
-#line 2342 "analisador_sintatico.tab.c"
+#line 2403 "analisador_sintatico.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2569,7 +2630,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 703 "analisador_sintatico.y"
+#line 752 "analisador_sintatico.y"
 
 
 #include "lex.yy.c"
@@ -2611,12 +2672,16 @@ main(){
 	insere_parametro_funcao(tab_funcoes,"media",tipo_parametros);
 	
 	pilha_exp = pilha_constroi();
-	
+	//arvore
 	a = inicializa_arvore();
-	
-	insere_atribuicao(a,"teste", "int", "100");
-	
-	
+	pilha_arvore = inicializa_pilha();
+	//a = insere_atribuicao(a,"teste", "int", "100");
+	//a = insere_atribuicao(a,"teste1", "real", "100.100");
+	//a = insere_atribuicao(a,"teste2", "char", "a");
+	//a = insere_atribuicao(a,"teste3", "booleano", "true");
+	//for(aux=a; aux!=NULL; aux=get_prox(aux)){
+	//	arvore_imprime(aux);
+	//}
 	yyparse();
 }
 
