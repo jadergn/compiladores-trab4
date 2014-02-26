@@ -6,7 +6,7 @@
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *a,*aux;
+Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if;
 
 Arvore_pilha *pilha_arvore;
 
@@ -280,7 +280,6 @@ comando
 valor_esquerda
 : token_identificador
 {
-	//printf("%s\n",identificador);
 	//verifica se a variavel que estao recebendo atribuicao foi declarada, se sim usada=1, var=NULL nao foi encontrada a variavel, logo ela nao foi declarada
 	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
@@ -292,12 +291,8 @@ valor_esquerda
 		set_usada(var);
 	}
 	
-	//aqui empilha primeiro a atribuicao e depois insere o valor_esquerda
-	//imprime_hash(tab_variaveis);
-	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("atribuicao",":="));
-	//imprime_hash(tab_variaveis);
-	//printf("-- %d\n",get_tipo(var));
-	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("variavel",identificador));
+	arvore_atribuicao = cria_arvore("atribuicao",":=");
+	arvore_atribuicao = insere_arvore(arvore_atribuicao,"variavel",identificador);
 	
 	var = inicializa();	
 	
@@ -310,21 +305,17 @@ atribuicao
 {
 	
 	var =busca(tab_variaveis,valor_esquerda, escopo);
-	arvore_pilha_imprime(pilha_arvore);
-	//if(var==NULL)
-	//	printf("Ta vazio\n");
-	//printf("--%s\n",get_nome(var));
+	aux = monta_arvore_atribuicao(pilha_arvore);
+	arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
+	//arvore_imprime(arvore_atribuicao);
+	arvore_final = insere_arvore_final(arvore_final,arvore_atribuicao);
+	//printf("\n\n#######################################\n\n");
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
-	//arvore_pilha_imprime(pilha_arvore);
-	a = insere_pilha_arvore_atribuicao(a, pilha_arvore);
-	//arvore_imprime(a);
-	for(aux=a; aux!=NULL; aux=get_prox(aux)){
-		//arvore_imprime(aux);
-	}
-	
+	aux = inicializa_arvore();
+	arvore_atribuicao = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
 	var=inicializa();
 	
@@ -436,6 +427,10 @@ termo_7
 	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","+"));
 }
 | termo_7 token_subtracao termo_8
+{
+	//printf("Subtracao\n");
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","-"));
+}
 | termo_8
 ;
 
@@ -447,6 +442,11 @@ termo_8
 	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","*"));
 }
 | termo_8 token_divisao termo_9
+{
+	//printf("Divisao\n");
+	
+	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","/"));
+}
 | termo_8 token_modulo termo_9
 | termo_9
 ;
@@ -479,7 +479,6 @@ termo_9
 }
 | valor_primitivo
 {
-	//printf("op = %c\n",operacao);
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
 	}
@@ -512,6 +511,8 @@ termo_9
 	}
 	func = inicializa();
 	qtd_parametros=0;
+	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
+	
 }
 | chamada_funcao_interna
 {
@@ -525,6 +526,7 @@ termo_9
 	}
 	func = inicializa();
 	qtd_parametros=0;
+	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
 }
 ;
 
@@ -791,12 +793,9 @@ main(){
 	
 	pilha_exp = pilha_constroi();
 	//arvore
-	a = inicializa_arvore();
+	arvore_final = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
-	//a = insere_atribuicao(a,"teste", "int", "100");
-	//a = insere_atribuicao(a,"teste1", "real", "100.100");
-	//a = insere_atribuicao(a,"teste2", "char", "a");
-	//a = insere_atribuicao(a,"teste3", "booleano", "true");
+	
 	//for(aux=a; aux!=NULL; aux=get_prox(aux)){
 	//	arvore_imprime(aux);
 	//}

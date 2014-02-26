@@ -12,6 +12,6 @@ fim-variáveis
 
 //inicio do programa
 início
-	idade :=10;
+	idade :=20 / 19 - 18 * 17 + a;
 fim
 

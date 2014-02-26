@@ -1,0 +1,3989 @@
+Terminais não utilizados na gramática
+
+   token_pr_nao
+   token_incrementador
+   token_til
+   token_aspas_dupla
+   token_aspas_simples
+   token_abre_chaves
+   token_fecha_chaves
+   token_tralha
+   token_contra_barra
+   token_ponto
+   token_desconhecido
+
+
+Gramática
+
+    0 $accept: algoritmo $end
+
+    1 algoritmo: declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal
+    2          | declaracao_algoritmo bloco_variaveis bloco_inicio_principal
+
+    3 declaracao_algoritmo: token_pr_algoritmo token_identificador token_ponto_virgula
+
+    4 bloco_variaveis: token_pr_variaveis declaracao_variaveis token_pr_fim_variaveis
+    5                | token_pr_variaveis token_pr_fim_variaveis
+    6                | /* vazio */
+
+    7 declaracao_variaveis: lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
+    8                     | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
+
+    9 tipo_variavel: tipo_primitivo
+   10              | tipo_matriz
+
+   11 lista_variaveis: lista_variaveis token_virgula token_identificador
+   12                | token_identificador
+
+   13 tipo_primitivo: token_pr_inteiro
+   14               | token_pr_real
+   15               | token_pr_caractere
+   16               | token_pr_literal
+   17               | token_pr_logico
+
+   18 tipo_matriz: token_pr_matriz matriz_colchetes token_pr_de tipo_primitivo_plural
+
+   19 matriz_colchetes: matriz_colchetes token_abre_colchetes token_inteiro token_fecha_colchetes
+   20                 | token_abre_colchetes token_inteiro token_fecha_colchetes
+
+   21 tipo_primitivo_plural: token_pr_inteiros
+   22                      | token_pr_reais
+   23                      | token_pr_caracteres
+   24                      | token_pr_literais
+   25                      | token_pr_logicos
+
+   26 bloco_inicio_principal: token_pr_inicio lista_comandos token_pr_fim
+   27                       | token_pr_inicio token_pr_fim
+
+   28 bloco_inicio_funcao: token_pr_inicio lista_comandos token_pr_fim
+   29                    | token_pr_inicio token_pr_fim
+
+   30 lista_comandos: lista_comandos comando
+   31               | comando
+
+   32 comando: atribuicao
+   33        | chamada_funcao token_ponto_virgula
+   34        | chamada_funcao_interna
+   35        | comando_retorne
+   36        | comando_se
+   37        | comando_enquanto
+   38        | comando_para
+   39        | comando_escolha
+
+   40 valor_esquerda: token_identificador
+   41               | token_identificador matriz_colchetes
+
+   42 atribuicao: valor_esquerda token_atribuicao expressao token_ponto_virgula
+
+   43 comando_retorne: token_pr_retorne token_ponto_virgula
+   44                | token_pr_retorne expressao token_ponto_virgula
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses token_identificador token_fecha_parenteses casos token_pr_fim_escolha
+
+   46 casos: casos caso
+   47      | caso
+
+   48 caso: token_pr_caso valor_primitivo token_dois_pontos lista_comandos token_pr_para token_ponto_virgula
+   49     | token_pr_caso valor_primitivo token_dois_pontos token_pr_para token_ponto_virgula
+   50     | token_pr_default token_dois_pontos lista_comandos token_pr_para token_ponto_virgula
+
+   51 comando_se: token_pr_se expressao token_pr_entao lista_comandos token_pr_fim_se
+   52           | token_pr_se expressao token_pr_entao lista_comandos token_pr_senao lista_comandos token_pr_fim_se
+
+   53 comando_enquanto: token_pr_enquanto expressao token_pr_faca lista_comandos token_pr_fim_enquanto
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+   56 passo: token_pr_passo token_inteiro
+   57      | token_pr_passo token_soma token_inteiro
+   58      | token_pr_passo token_subtracao token_inteiro
+
+   59 expressao: expressao token_pr_ou termo_1
+   60          | expressao token_ou termo_1
+   61          | termo_1
+
+   62 termo_1: termo_1 token_pr_e termo_2
+   63        | termo_1 token_e termo_2
+   64        | termo_2
+
+   65 termo_2: termo_2 token_ou_bit termo_3
+   66        | termo_3
+
+   67 termo_3: termo_3 token_xor_bit termo_4
+   68        | termo_4
+
+   69 termo_4: termo_4 token_e_bit termo_5
+   70        | termo_5
+
+   71 termo_5: termo_5 token_igual termo_6
+   72        | termo_5 token_diferente termo_6
+   73        | termo_6
+
+   74 termo_6: termo_6 token_menor termo_7
+   75        | termo_6 token_menor_igual termo_7
+   76        | termo_6 token_maior termo_7
+   77        | termo_6 token_maior_igual termo_7
+   78        | termo_7
+
+   79 termo_7: termo_7 token_soma termo_8
+   80        | termo_7 token_subtracao termo_8
+   81        | termo_8
+
+   82 termo_8: termo_8 token_multiplicacao termo_9
+   83        | termo_8 token_divisao termo_9
+   84        | termo_8 token_modulo termo_9
+   85        | termo_9
+
+   86 termo_9: token_soma termo_9
+   87        | token_subtracao termo_9
+   88        | token_nao termo_9
+   89        | token_abre_parenteses expressao token_fecha_parenteses
+   90        | token_identificador
+   91        | valor_primitivo
+   92        | chamada_funcao
+   93        | chamada_funcao_interna
+
+   94 valor_primitivo: token_literal
+   95                | token_inteiro
+   96                | token_real
+   97                | token_caractere
+   98                | token_pr_verdadeiro
+   99                | token_pr_falso
+
+  100 chamada_funcao: token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+  101               | token_identificador token_abre_parenteses token_fecha_parenteses
+
+  102 chamada_funcao_interna: token_pr_imprima token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+  103                       | token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+  104                       | token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+  105                       | token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+  106                       | token_pr_maximo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+  107                       | token_pr_minimo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+  108                       | token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao token_virgula expressao
+  110                           | expressao
+
+  111 declaracao_funcoes: declaracao_funcoes declaracao_funcao
+  112                   | declaracao_funcao
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
+  114                  | token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
+
+  115 paramentros_funcao_parenteses: token_abre_parenteses paramentros_funcao token_fecha_parenteses
+  116                              | token_abre_parenteses token_fecha_parenteses
+
+  117 paramentros_funcao: paramentros_funcao token_virgula paramentro_funcao
+  118                   | paramentro_funcao
+
+  119 paramentro_funcao: token_identificador token_dois_pontos tipo_primitivo
+  120                  | token_identificador token_dois_pontos tipo_matriz
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+error (256)
+token_pr_algoritmo (258) 3
+token_pr_variaveis (259) 4 5
+token_pr_fim_variaveis (260) 4 5
+token_pr_inicio (261) 26 27 28 29
+token_pr_fim (262) 26 27 28 29
+token_pr_inteiro (263) 13
+token_pr_inteiros (264) 21
+token_pr_caractere (265) 15
+token_pr_caracteres (266) 23
+token_pr_real (267) 14
+token_pr_reais (268) 22
+token_pr_literal (269) 16
+token_pr_literais (270) 24
+token_pr_logico (271) 17
+token_pr_logicos (272) 25
+token_pr_matriz (273) 18
+token_pr_se (274) 51 52
+token_pr_entao (275) 51 52
+token_pr_senao (276) 52
+token_pr_fim_se (277) 51 52
+token_pr_para (278) 48 49 50 54 55
+token_pr_de (279) 18 54 55
+token_pr_ate (280) 54 55
+token_pr_faca (281) 53 54 55
+token_pr_passo (282) 56 57 58
+token_pr_fim_para (283) 54 55
+token_pr_enquanto (284) 53
+token_pr_fim_enquanto (285) 53
+token_pr_imprima (286) 102
+token_pr_leia (287) 103
+token_pr_imprima_ln (288) 105
+token_pr_leia_ln (289) 104
+token_pr_maximo (290) 106
+token_pr_minimo (291) 107
+token_pr_media (292) 108
+token_pr_funcao (293) 113 114
+token_pr_retorne (294) 43 44
+token_pr_verdadeiro (295) 98
+token_pr_falso (296) 99
+token_pr_e (297) 62
+token_pr_ou (298) 59
+token_pr_nao (299)
+token_inteiro (300) 19 20 56 57 58 95
+token_real (301) 96
+token_caractere (302) 97
+token_literal (303) 94
+token_soma (304) 57 79 86
+token_subtracao (305) 58 80 87
+token_divisao (306) 83
+token_multiplicacao (307) 82
+token_incrementador (308)
+token_modulo (309) 84
+token_maior (310) 76
+token_maior_igual (311) 77
+token_menor (312) 74
+token_menor_igual (313) 75
+token_igual (314) 71
+token_diferente (315) 72
+token_e (316) 63
+token_e_bit (317) 69
+token_ou (318) 60
+token_ou_bit (319) 65
+token_xor_bit (320) 67
+token_til (321)
+token_nao (322) 88
+token_aspas_dupla (323)
+token_aspas_simples (324)
+token_abre_parenteses (325) 45 89 100 101 102 103 104 105 106 107 108
+    115 116
+token_fecha_parenteses (326) 45 89 100 101 102 103 104 105 106 107
+    108 115 116
+token_abre_chaves (327)
+token_fecha_chaves (328)
+token_abre_colchetes (329) 19 20
+token_fecha_colchetes (330) 19 20
+token_tralha (331)
+token_contra_barra (332)
+token_ponto (333)
+token_virgula (334) 11 109 117
+token_dois_pontos (335) 7 8 48 49 50 113 119 120
+token_ponto_virgula (336) 3 7 8 33 42 43 44 48 49 50 102 103 104 105
+token_atribuicao (337) 42
+token_identificador (338) 3 11 12 40 41 45 90 100 101 113 114 119 120
+token_desconhecido (339)
+token_pr_fim_funcao (340) 113 114
+token_pr_escolha (341) 45
+token_pr_caso (342) 48 49
+token_pr_fim_escolha (343) 45
+token_pr_default (344) 50
+
+
+Não-terminais com as regras onde eles aparecem
+
+$accept (90)
+    à esquerda: 0
+algoritmo (91)
+    à esquerda: 1 2, à direita: 0
+declaracao_algoritmo (92)
+    à esquerda: 3, à direita: 1 2
+bloco_variaveis (93)
+    à esquerda: 4 5 6, à direita: 1 2
+declaracao_variaveis (94)
+    à esquerda: 7 8, à direita: 4 8
+tipo_variavel (95)
+    à esquerda: 9 10, à direita: 7 8
+lista_variaveis (96)
+    à esquerda: 11 12, à direita: 7 8 11
+tipo_primitivo (97)
+    à esquerda: 13 14 15 16 17, à direita: 9 113 119
+tipo_matriz (98)
+    à esquerda: 18, à direita: 10 120
+matriz_colchetes (99)
+    à esquerda: 19 20, à direita: 18 19 41
+tipo_primitivo_plural (100)
+    à esquerda: 21 22 23 24 25, à direita: 18
+bloco_inicio_principal (101)
+    à esquerda: 26 27, à direita: 1 2
+bloco_inicio_funcao (102)
+    à esquerda: 28 29, à direita: 113 114
+lista_comandos (103)
+    à esquerda: 30 31, à direita: 26 28 30 48 50 51 52 53 54 55
+comando (104)
+    à esquerda: 32 33 34 35 36 37 38 39, à direita: 30 31
+valor_esquerda (105)
+    à esquerda: 40 41, à direita: 42 54 55
+atribuicao (106)
+    à esquerda: 42, à direita: 32
+comando_retorne (107)
+    à esquerda: 43 44, à direita: 35
+comando_escolha (108)
+    à esquerda: 45, à direita: 39
+casos (109)
+    à esquerda: 46 47, à direita: 45 46
+caso (110)
+    à esquerda: 48 49 50, à direita: 46 47
+comando_se (111)
+    à esquerda: 51 52, à direita: 36
+comando_enquanto (112)
+    à esquerda: 53, à direita: 37
+comando_para (113)
+    à esquerda: 54 55, à direita: 38
+passo (114)
+    à esquerda: 56 57 58, à direita: 55
+expressao (115)
+    à esquerda: 59 60 61, à direita: 42 44 51 52 53 54 55 59 60 89
+    109 110
+termo_1 (116)
+    à esquerda: 62 63 64, à direita: 59 60 61 62 63
+termo_2 (117)
+    à esquerda: 65 66, à direita: 62 63 64 65
+termo_3 (118)
+    à esquerda: 67 68, à direita: 65 66 67
+termo_4 (119)
+    à esquerda: 69 70, à direita: 67 68 69
+termo_5 (120)
+    à esquerda: 71 72 73, à direita: 69 70 71 72
+termo_6 (121)
+    à esquerda: 74 75 76 77 78, à direita: 71 72 73 74 75 76 77
+termo_7 (122)
+    à esquerda: 79 80 81, à direita: 74 75 76 77 78 79 80
+termo_8 (123)
+    à esquerda: 82 83 84 85, à direita: 79 80 81 82 83 84
+termo_9 (124)
+    à esquerda: 86 87 88 89 90 91 92 93, à direita: 82 83 84 85 86
+    87 88
+valor_primitivo (125)
+    à esquerda: 94 95 96 97 98 99, à direita: 48 49 91
+chamada_funcao (126)
+    à esquerda: 100 101, à direita: 33 92
+chamada_funcao_interna (127)
+    à esquerda: 102 103 104 105 106 107 108, à direita: 34 93
+paramentros_chamada_funcao (128)
+    à esquerda: 109 110, à direita: 100 102 103 104 105 106 107 108
+    109
+declaracao_funcoes (129)
+    à esquerda: 111 112, à direita: 1 111
+declaracao_funcao (130)
+    à esquerda: 113 114, à direita: 111 112
+paramentros_funcao_parenteses (131)
+    à esquerda: 115 116, à direita: 113 114
+paramentros_funcao (132)
+    à esquerda: 117 118, à direita: 115 117
+paramentro_funcao (133)
+    à esquerda: 119 120, à direita: 117 118
+
+
+State 0
+
+    0 $accept: . algoritmo $end
+
+    token_pr_algoritmo  deslocar, e ir ao estado 1
+
+    algoritmo             ir ao estado 2
+    declaracao_algoritmo  ir ao estado 3
+
+
+State 1
+
+    3 declaracao_algoritmo: token_pr_algoritmo . token_identificador token_ponto_virgula
+
+    token_identificador  deslocar, e ir ao estado 4
+
+
+State 2
+
+    0 $accept: algoritmo . $end
+
+    $end  deslocar, e ir ao estado 5
+
+
+State 3
+
+    1 algoritmo: declaracao_algoritmo . declaracao_funcoes bloco_variaveis bloco_inicio_principal
+    2          | declaracao_algoritmo . bloco_variaveis bloco_inicio_principal
+
+    token_pr_variaveis  deslocar, e ir ao estado 6
+    token_pr_funcao     deslocar, e ir ao estado 7
+
+    $padrão  reduzir usando a regra 6 (bloco_variaveis)
+
+    bloco_variaveis     ir ao estado 8
+    declaracao_funcoes  ir ao estado 9
+    declaracao_funcao   ir ao estado 10
+
+
+State 4
+
+    3 declaracao_algoritmo: token_pr_algoritmo token_identificador . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 11
+
+
+State 5
+
+    0 $accept: algoritmo $end .
+
+    $padrão  aceitar
+
+
+State 6
+
+    4 bloco_variaveis: token_pr_variaveis . declaracao_variaveis token_pr_fim_variaveis
+    5                | token_pr_variaveis . token_pr_fim_variaveis
+
+    token_pr_fim_variaveis  deslocar, e ir ao estado 12
+    token_identificador     deslocar, e ir ao estado 13
+
+    declaracao_variaveis  ir ao estado 14
+    lista_variaveis       ir ao estado 15
+
+
+State 7
+
+  113 declaracao_funcao: token_pr_funcao . token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
+  114                  | token_pr_funcao . token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
+
+    token_identificador  deslocar, e ir ao estado 16
+
+
+State 8
+
+    2 algoritmo: declaracao_algoritmo bloco_variaveis . bloco_inicio_principal
+
+    token_pr_inicio  deslocar, e ir ao estado 17
+
+    bloco_inicio_principal  ir ao estado 18
+
+
+State 9
+
+    1 algoritmo: declaracao_algoritmo declaracao_funcoes . bloco_variaveis bloco_inicio_principal
+  111 declaracao_funcoes: declaracao_funcoes . declaracao_funcao
+
+    token_pr_variaveis  deslocar, e ir ao estado 6
+    token_pr_funcao     deslocar, e ir ao estado 7
+
+    $padrão  reduzir usando a regra 6 (bloco_variaveis)
+
+    bloco_variaveis    ir ao estado 19
+    declaracao_funcao  ir ao estado 20
+
+
+State 10
+
+  112 declaracao_funcoes: declaracao_funcao .
+
+    $padrão  reduzir usando a regra 112 (declaracao_funcoes)
+
+
+State 11
+
+    3 declaracao_algoritmo: token_pr_algoritmo token_identificador token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 3 (declaracao_algoritmo)
+
+
+State 12
+
+    5 bloco_variaveis: token_pr_variaveis token_pr_fim_variaveis .
+
+    $padrão  reduzir usando a regra 5 (bloco_variaveis)
+
+
+State 13
+
+   12 lista_variaveis: token_identificador .
+
+    $padrão  reduzir usando a regra 12 (lista_variaveis)
+
+
+State 14
+
+    4 bloco_variaveis: token_pr_variaveis declaracao_variaveis . token_pr_fim_variaveis
+    8 declaracao_variaveis: declaracao_variaveis . lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
+
+    token_pr_fim_variaveis  deslocar, e ir ao estado 21
+    token_identificador     deslocar, e ir ao estado 13
+
+    lista_variaveis  ir ao estado 22
+
+
+State 15
+
+    7 declaracao_variaveis: lista_variaveis . token_dois_pontos tipo_variavel token_ponto_virgula
+   11 lista_variaveis: lista_variaveis . token_virgula token_identificador
+
+    token_virgula      deslocar, e ir ao estado 23
+    token_dois_pontos  deslocar, e ir ao estado 24
+
+
+State 16
+
+  113 declaracao_funcao: token_pr_funcao token_identificador . paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
+  114                  | token_pr_funcao token_identificador . paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao
+
+    token_abre_parenteses  deslocar, e ir ao estado 25
+
+    paramentros_funcao_parenteses  ir ao estado 26
+
+
+State 17
+
+   26 bloco_inicio_principal: token_pr_inicio . lista_comandos token_pr_fim
+   27                       | token_pr_inicio . token_pr_fim
+
+    token_pr_fim         deslocar, e ir ao estado 27
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 41
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 18
+
+    2 algoritmo: declaracao_algoritmo bloco_variaveis bloco_inicio_principal .
+
+    $padrão  reduzir usando a regra 2 (algoritmo)
+
+
+State 19
+
+    1 algoritmo: declaracao_algoritmo declaracao_funcoes bloco_variaveis . bloco_inicio_principal
+
+    token_pr_inicio  deslocar, e ir ao estado 17
+
+    bloco_inicio_principal  ir ao estado 52
+
+
+State 20
+
+  111 declaracao_funcoes: declaracao_funcoes declaracao_funcao .
+
+    $padrão  reduzir usando a regra 111 (declaracao_funcoes)
+
+
+State 21
+
+    4 bloco_variaveis: token_pr_variaveis declaracao_variaveis token_pr_fim_variaveis .
+
+    $padrão  reduzir usando a regra 4 (bloco_variaveis)
+
+
+State 22
+
+    8 declaracao_variaveis: declaracao_variaveis lista_variaveis . token_dois_pontos tipo_variavel token_ponto_virgula
+   11 lista_variaveis: lista_variaveis . token_virgula token_identificador
+
+    token_virgula      deslocar, e ir ao estado 23
+    token_dois_pontos  deslocar, e ir ao estado 53
+
+
+State 23
+
+   11 lista_variaveis: lista_variaveis token_virgula . token_identificador
+
+    token_identificador  deslocar, e ir ao estado 54
+
+
+State 24
+
+    7 declaracao_variaveis: lista_variaveis token_dois_pontos . tipo_variavel token_ponto_virgula
+
+    token_pr_inteiro    deslocar, e ir ao estado 55
+    token_pr_caractere  deslocar, e ir ao estado 56
+    token_pr_real       deslocar, e ir ao estado 57
+    token_pr_literal    deslocar, e ir ao estado 58
+    token_pr_logico     deslocar, e ir ao estado 59
+    token_pr_matriz     deslocar, e ir ao estado 60
+
+    tipo_variavel   ir ao estado 61
+    tipo_primitivo  ir ao estado 62
+    tipo_matriz     ir ao estado 63
+
+
+State 25
+
+  115 paramentros_funcao_parenteses: token_abre_parenteses . paramentros_funcao token_fecha_parenteses
+  116                              | token_abre_parenteses . token_fecha_parenteses
+
+    token_fecha_parenteses  deslocar, e ir ao estado 64
+    token_identificador     deslocar, e ir ao estado 65
+
+    paramentros_funcao  ir ao estado 66
+    paramentro_funcao   ir ao estado 67
+
+
+State 26
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses . token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
+  114                  | token_pr_funcao token_identificador paramentros_funcao_parenteses . bloco_inicio_funcao token_pr_fim_funcao
+
+    token_pr_inicio    deslocar, e ir ao estado 68
+    token_dois_pontos  deslocar, e ir ao estado 69
+
+    bloco_inicio_funcao  ir ao estado 70
+
+
+State 27
+
+   27 bloco_inicio_principal: token_pr_inicio token_pr_fim .
+
+    $padrão  reduzir usando a regra 27 (bloco_inicio_principal)
+
+
+State 28
+
+   51 comando_se: token_pr_se . expressao token_pr_entao lista_comandos token_pr_fim_se
+   52           | token_pr_se . expressao token_pr_entao lista_comandos token_pr_senao lista_comandos token_pr_fim_se
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 82
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 29
+
+   54 comando_para: token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_identificador  deslocar, e ir ao estado 95
+
+    valor_esquerda  ir ao estado 96
+
+
+State 30
+
+   53 comando_enquanto: token_pr_enquanto . expressao token_pr_faca lista_comandos token_pr_fim_enquanto
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 97
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 31
+
+  102 chamada_funcao_interna: token_pr_imprima . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_abre_parenteses  deslocar, e ir ao estado 98
+
+
+State 32
+
+  103 chamada_funcao_interna: token_pr_leia . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_abre_parenteses  deslocar, e ir ao estado 99
+
+
+State 33
+
+  105 chamada_funcao_interna: token_pr_imprima_ln . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_abre_parenteses  deslocar, e ir ao estado 100
+
+
+State 34
+
+  104 chamada_funcao_interna: token_pr_leia_ln . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_abre_parenteses  deslocar, e ir ao estado 101
+
+
+State 35
+
+  106 chamada_funcao_interna: token_pr_maximo . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+
+    token_abre_parenteses  deslocar, e ir ao estado 102
+
+
+State 36
+
+  107 chamada_funcao_interna: token_pr_minimo . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+
+    token_abre_parenteses  deslocar, e ir ao estado 103
+
+
+State 37
+
+  108 chamada_funcao_interna: token_pr_media . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+
+    token_abre_parenteses  deslocar, e ir ao estado 104
+
+
+State 38
+
+   43 comando_retorne: token_pr_retorne . token_ponto_virgula
+   44                | token_pr_retorne . expressao token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_ponto_virgula    deslocar, e ir ao estado 105
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 106
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 39
+
+   40 valor_esquerda: token_identificador .
+   41               | token_identificador . matriz_colchetes
+  100 chamada_funcao: token_identificador . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+  101               | token_identificador . token_abre_parenteses token_fecha_parenteses
+
+    token_abre_parenteses  deslocar, e ir ao estado 107
+    token_abre_colchetes   deslocar, e ir ao estado 108
+
+    $padrão  reduzir usando a regra 40 (valor_esquerda)
+
+    matriz_colchetes  ir ao estado 109
+
+
+State 40
+
+   45 comando_escolha: token_pr_escolha . token_abre_parenteses token_identificador token_fecha_parenteses casos token_pr_fim_escolha
+
+    token_abre_parenteses  deslocar, e ir ao estado 110
+
+
+State 41
+
+   26 bloco_inicio_principal: token_pr_inicio lista_comandos . token_pr_fim
+   30 lista_comandos: lista_comandos . comando
+
+    token_pr_fim         deslocar, e ir ao estado 111
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 42
+
+   31 lista_comandos: comando .
+
+    $padrão  reduzir usando a regra 31 (lista_comandos)
+
+
+State 43
+
+   42 atribuicao: valor_esquerda . token_atribuicao expressao token_ponto_virgula
+
+    token_atribuicao  deslocar, e ir ao estado 113
+
+
+State 44
+
+   32 comando: atribuicao .
+
+    $padrão  reduzir usando a regra 32 (comando)
+
+
+State 45
+
+   35 comando: comando_retorne .
+
+    $padrão  reduzir usando a regra 35 (comando)
+
+
+State 46
+
+   39 comando: comando_escolha .
+
+    $padrão  reduzir usando a regra 39 (comando)
+
+
+State 47
+
+   36 comando: comando_se .
+
+    $padrão  reduzir usando a regra 36 (comando)
+
+
+State 48
+
+   37 comando: comando_enquanto .
+
+    $padrão  reduzir usando a regra 37 (comando)
+
+
+State 49
+
+   38 comando: comando_para .
+
+    $padrão  reduzir usando a regra 38 (comando)
+
+
+State 50
+
+   33 comando: chamada_funcao . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 114
+
+
+State 51
+
+   34 comando: chamada_funcao_interna .
+
+    $padrão  reduzir usando a regra 34 (comando)
+
+
+State 52
+
+    1 algoritmo: declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal .
+
+    $padrão  reduzir usando a regra 1 (algoritmo)
+
+
+State 53
+
+    8 declaracao_variaveis: declaracao_variaveis lista_variaveis token_dois_pontos . tipo_variavel token_ponto_virgula
+
+    token_pr_inteiro    deslocar, e ir ao estado 55
+    token_pr_caractere  deslocar, e ir ao estado 56
+    token_pr_real       deslocar, e ir ao estado 57
+    token_pr_literal    deslocar, e ir ao estado 58
+    token_pr_logico     deslocar, e ir ao estado 59
+    token_pr_matriz     deslocar, e ir ao estado 60
+
+    tipo_variavel   ir ao estado 115
+    tipo_primitivo  ir ao estado 62
+    tipo_matriz     ir ao estado 63
+
+
+State 54
+
+   11 lista_variaveis: lista_variaveis token_virgula token_identificador .
+
+    $padrão  reduzir usando a regra 11 (lista_variaveis)
+
+
+State 55
+
+   13 tipo_primitivo: token_pr_inteiro .
+
+    $padrão  reduzir usando a regra 13 (tipo_primitivo)
+
+
+State 56
+
+   15 tipo_primitivo: token_pr_caractere .
+
+    $padrão  reduzir usando a regra 15 (tipo_primitivo)
+
+
+State 57
+
+   14 tipo_primitivo: token_pr_real .
+
+    $padrão  reduzir usando a regra 14 (tipo_primitivo)
+
+
+State 58
+
+   16 tipo_primitivo: token_pr_literal .
+
+    $padrão  reduzir usando a regra 16 (tipo_primitivo)
+
+
+State 59
+
+   17 tipo_primitivo: token_pr_logico .
+
+    $padrão  reduzir usando a regra 17 (tipo_primitivo)
+
+
+State 60
+
+   18 tipo_matriz: token_pr_matriz . matriz_colchetes token_pr_de tipo_primitivo_plural
+
+    token_abre_colchetes  deslocar, e ir ao estado 108
+
+    matriz_colchetes  ir ao estado 116
+
+
+State 61
+
+    7 declaracao_variaveis: lista_variaveis token_dois_pontos tipo_variavel . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 117
+
+
+State 62
+
+    9 tipo_variavel: tipo_primitivo .
+
+    $padrão  reduzir usando a regra 9 (tipo_variavel)
+
+
+State 63
+
+   10 tipo_variavel: tipo_matriz .
+
+    $padrão  reduzir usando a regra 10 (tipo_variavel)
+
+
+State 64
+
+  116 paramentros_funcao_parenteses: token_abre_parenteses token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 116 (paramentros_funcao_parenteses)
+
+
+State 65
+
+  119 paramentro_funcao: token_identificador . token_dois_pontos tipo_primitivo
+  120                  | token_identificador . token_dois_pontos tipo_matriz
+
+    token_dois_pontos  deslocar, e ir ao estado 118
+
+
+State 66
+
+  115 paramentros_funcao_parenteses: token_abre_parenteses paramentros_funcao . token_fecha_parenteses
+  117 paramentros_funcao: paramentros_funcao . token_virgula paramentro_funcao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 119
+    token_virgula           deslocar, e ir ao estado 120
+
+
+State 67
+
+  118 paramentros_funcao: paramentro_funcao .
+
+    $padrão  reduzir usando a regra 118 (paramentros_funcao)
+
+
+State 68
+
+   28 bloco_inicio_funcao: token_pr_inicio . lista_comandos token_pr_fim
+   29                    | token_pr_inicio . token_pr_fim
+
+    token_pr_fim         deslocar, e ir ao estado 121
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 122
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 69
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos . tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao
+
+    token_pr_inteiro    deslocar, e ir ao estado 55
+    token_pr_caractere  deslocar, e ir ao estado 56
+    token_pr_real       deslocar, e ir ao estado 57
+    token_pr_literal    deslocar, e ir ao estado 58
+    token_pr_logico     deslocar, e ir ao estado 59
+
+    tipo_primitivo  ir ao estado 123
+
+
+State 70
+
+  114 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao . token_pr_fim_funcao
+
+    token_pr_fim_funcao  deslocar, e ir ao estado 124
+
+
+State 71
+
+   98 valor_primitivo: token_pr_verdadeiro .
+
+    $padrão  reduzir usando a regra 98 (valor_primitivo)
+
+
+State 72
+
+   99 valor_primitivo: token_pr_falso .
+
+    $padrão  reduzir usando a regra 99 (valor_primitivo)
+
+
+State 73
+
+   95 valor_primitivo: token_inteiro .
+
+    $padrão  reduzir usando a regra 95 (valor_primitivo)
+
+
+State 74
+
+   96 valor_primitivo: token_real .
+
+    $padrão  reduzir usando a regra 96 (valor_primitivo)
+
+
+State 75
+
+   97 valor_primitivo: token_caractere .
+
+    $padrão  reduzir usando a regra 97 (valor_primitivo)
+
+
+State 76
+
+   94 valor_primitivo: token_literal .
+
+    $padrão  reduzir usando a regra 94 (valor_primitivo)
+
+
+State 77
+
+   86 termo_9: token_soma . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 125
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 78
+
+   87 termo_9: token_subtracao . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 126
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 79
+
+   88 termo_9: token_nao . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 127
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 80
+
+   89 termo_9: token_abre_parenteses . expressao token_fecha_parenteses
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 128
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 81
+
+   90 termo_9: token_identificador .
+  100 chamada_funcao: token_identificador . token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses
+  101               | token_identificador . token_abre_parenteses token_fecha_parenteses
+
+    token_abre_parenteses  deslocar, e ir ao estado 107
+
+    $padrão  reduzir usando a regra 90 (termo_9)
+
+
+State 82
+
+   51 comando_se: token_pr_se expressao . token_pr_entao lista_comandos token_pr_fim_se
+   52           | token_pr_se expressao . token_pr_entao lista_comandos token_pr_senao lista_comandos token_pr_fim_se
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_entao  deslocar, e ir ao estado 129
+    token_pr_ou     deslocar, e ir ao estado 130
+    token_ou        deslocar, e ir ao estado 131
+
+
+State 83
+
+   61 expressao: termo_1 .
+   62 termo_1: termo_1 . token_pr_e termo_2
+   63        | termo_1 . token_e termo_2
+
+    token_pr_e  deslocar, e ir ao estado 132
+    token_e     deslocar, e ir ao estado 133
+
+    $padrão  reduzir usando a regra 61 (expressao)
+
+
+State 84
+
+   64 termo_1: termo_2 .
+   65 termo_2: termo_2 . token_ou_bit termo_3
+
+    token_ou_bit  deslocar, e ir ao estado 134
+
+    $padrão  reduzir usando a regra 64 (termo_1)
+
+
+State 85
+
+   66 termo_2: termo_3 .
+   67 termo_3: termo_3 . token_xor_bit termo_4
+
+    token_xor_bit  deslocar, e ir ao estado 135
+
+    $padrão  reduzir usando a regra 66 (termo_2)
+
+
+State 86
+
+   68 termo_3: termo_4 .
+   69 termo_4: termo_4 . token_e_bit termo_5
+
+    token_e_bit  deslocar, e ir ao estado 136
+
+    $padrão  reduzir usando a regra 68 (termo_3)
+
+
+State 87
+
+   70 termo_4: termo_5 .
+   71 termo_5: termo_5 . token_igual termo_6
+   72        | termo_5 . token_diferente termo_6
+
+    token_igual      deslocar, e ir ao estado 137
+    token_diferente  deslocar, e ir ao estado 138
+
+    $padrão  reduzir usando a regra 70 (termo_4)
+
+
+State 88
+
+   73 termo_5: termo_6 .
+   74 termo_6: termo_6 . token_menor termo_7
+   75        | termo_6 . token_menor_igual termo_7
+   76        | termo_6 . token_maior termo_7
+   77        | termo_6 . token_maior_igual termo_7
+
+    token_maior        deslocar, e ir ao estado 139
+    token_maior_igual  deslocar, e ir ao estado 140
+    token_menor        deslocar, e ir ao estado 141
+    token_menor_igual  deslocar, e ir ao estado 142
+
+    $padrão  reduzir usando a regra 73 (termo_5)
+
+
+State 89
+
+   78 termo_6: termo_7 .
+   79 termo_7: termo_7 . token_soma termo_8
+   80        | termo_7 . token_subtracao termo_8
+
+    token_soma       deslocar, e ir ao estado 143
+    token_subtracao  deslocar, e ir ao estado 144
+
+    $padrão  reduzir usando a regra 78 (termo_6)
+
+
+State 90
+
+   81 termo_7: termo_8 .
+   82 termo_8: termo_8 . token_multiplicacao termo_9
+   83        | termo_8 . token_divisao termo_9
+   84        | termo_8 . token_modulo termo_9
+
+    token_divisao        deslocar, e ir ao estado 145
+    token_multiplicacao  deslocar, e ir ao estado 146
+    token_modulo         deslocar, e ir ao estado 147
+
+    $padrão  reduzir usando a regra 81 (termo_7)
+
+
+State 91
+
+   85 termo_8: termo_9 .
+
+    $padrão  reduzir usando a regra 85 (termo_8)
+
+
+State 92
+
+   91 termo_9: valor_primitivo .
+
+    $padrão  reduzir usando a regra 91 (termo_9)
+
+
+State 93
+
+   92 termo_9: chamada_funcao .
+
+    $padrão  reduzir usando a regra 92 (termo_9)
+
+
+State 94
+
+   93 termo_9: chamada_funcao_interna .
+
+    $padrão  reduzir usando a regra 93 (termo_9)
+
+
+State 95
+
+   40 valor_esquerda: token_identificador .
+   41               | token_identificador . matriz_colchetes
+
+    token_abre_colchetes  deslocar, e ir ao estado 108
+
+    $padrão  reduzir usando a regra 40 (valor_esquerda)
+
+    matriz_colchetes  ir ao estado 109
+
+
+State 96
+
+   54 comando_para: token_pr_para valor_esquerda . token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda . token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_pr_de  deslocar, e ir ao estado 148
+
+
+State 97
+
+   53 comando_enquanto: token_pr_enquanto expressao . token_pr_faca lista_comandos token_pr_fim_enquanto
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_faca  deslocar, e ir ao estado 149
+    token_pr_ou    deslocar, e ir ao estado 130
+    token_ou       deslocar, e ir ao estado 131
+
+
+State 98
+
+  102 chamada_funcao_interna: token_pr_imprima token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 151
+
+
+State 99
+
+  103 chamada_funcao_interna: token_pr_leia token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 152
+
+
+State 100
+
+  105 chamada_funcao_interna: token_pr_imprima_ln token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 153
+
+
+State 101
+
+  104 chamada_funcao_interna: token_pr_leia_ln token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 154
+
+
+State 102
+
+  106 chamada_funcao_interna: token_pr_maximo token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 155
+
+
+State 103
+
+  107 chamada_funcao_interna: token_pr_minimo token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 156
+
+
+State 104
+
+  108 chamada_funcao_interna: token_pr_media token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 157
+
+
+State 105
+
+   43 comando_retorne: token_pr_retorne token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 43 (comando_retorne)
+
+
+State 106
+
+   44 comando_retorne: token_pr_retorne expressao . token_ponto_virgula
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_ou          deslocar, e ir ao estado 130
+    token_ou             deslocar, e ir ao estado 131
+    token_ponto_virgula  deslocar, e ir ao estado 158
+
+
+State 107
+
+  100 chamada_funcao: token_identificador token_abre_parenteses . paramentros_chamada_funcao token_fecha_parenteses
+  101               | token_identificador token_abre_parenteses . token_fecha_parenteses
+
+    token_pr_imprima        deslocar, e ir ao estado 31
+    token_pr_leia           deslocar, e ir ao estado 32
+    token_pr_imprima_ln     deslocar, e ir ao estado 33
+    token_pr_leia_ln        deslocar, e ir ao estado 34
+    token_pr_maximo         deslocar, e ir ao estado 35
+    token_pr_minimo         deslocar, e ir ao estado 36
+    token_pr_media          deslocar, e ir ao estado 37
+    token_pr_verdadeiro     deslocar, e ir ao estado 71
+    token_pr_falso          deslocar, e ir ao estado 72
+    token_inteiro           deslocar, e ir ao estado 73
+    token_real              deslocar, e ir ao estado 74
+    token_caractere         deslocar, e ir ao estado 75
+    token_literal           deslocar, e ir ao estado 76
+    token_soma              deslocar, e ir ao estado 77
+    token_subtracao         deslocar, e ir ao estado 78
+    token_nao               deslocar, e ir ao estado 79
+    token_abre_parenteses   deslocar, e ir ao estado 80
+    token_fecha_parenteses  deslocar, e ir ao estado 159
+    token_identificador     deslocar, e ir ao estado 81
+
+    expressao                   ir ao estado 150
+    termo_1                     ir ao estado 83
+    termo_2                     ir ao estado 84
+    termo_3                     ir ao estado 85
+    termo_4                     ir ao estado 86
+    termo_5                     ir ao estado 87
+    termo_6                     ir ao estado 88
+    termo_7                     ir ao estado 89
+    termo_8                     ir ao estado 90
+    termo_9                     ir ao estado 91
+    valor_primitivo             ir ao estado 92
+    chamada_funcao              ir ao estado 93
+    chamada_funcao_interna      ir ao estado 94
+    paramentros_chamada_funcao  ir ao estado 160
+
+
+State 108
+
+   20 matriz_colchetes: token_abre_colchetes . token_inteiro token_fecha_colchetes
+
+    token_inteiro  deslocar, e ir ao estado 161
+
+
+State 109
+
+   19 matriz_colchetes: matriz_colchetes . token_abre_colchetes token_inteiro token_fecha_colchetes
+   41 valor_esquerda: token_identificador matriz_colchetes .
+
+    token_abre_colchetes  deslocar, e ir ao estado 162
+
+    $padrão  reduzir usando a regra 41 (valor_esquerda)
+
+
+State 110
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses . token_identificador token_fecha_parenteses casos token_pr_fim_escolha
+
+    token_identificador  deslocar, e ir ao estado 163
+
+
+State 111
+
+   26 bloco_inicio_principal: token_pr_inicio lista_comandos token_pr_fim .
+
+    $padrão  reduzir usando a regra 26 (bloco_inicio_principal)
+
+
+State 112
+
+   30 lista_comandos: lista_comandos comando .
+
+    $padrão  reduzir usando a regra 30 (lista_comandos)
+
+
+State 113
+
+   42 atribuicao: valor_esquerda token_atribuicao . expressao token_ponto_virgula
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 164
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 114
+
+   33 comando: chamada_funcao token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 33 (comando)
+
+
+State 115
+
+    8 declaracao_variaveis: declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 165
+
+
+State 116
+
+   18 tipo_matriz: token_pr_matriz matriz_colchetes . token_pr_de tipo_primitivo_plural
+   19 matriz_colchetes: matriz_colchetes . token_abre_colchetes token_inteiro token_fecha_colchetes
+
+    token_pr_de           deslocar, e ir ao estado 166
+    token_abre_colchetes  deslocar, e ir ao estado 162
+
+
+State 117
+
+    7 declaracao_variaveis: lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 7 (declaracao_variaveis)
+
+
+State 118
+
+  119 paramentro_funcao: token_identificador token_dois_pontos . tipo_primitivo
+  120                  | token_identificador token_dois_pontos . tipo_matriz
+
+    token_pr_inteiro    deslocar, e ir ao estado 55
+    token_pr_caractere  deslocar, e ir ao estado 56
+    token_pr_real       deslocar, e ir ao estado 57
+    token_pr_literal    deslocar, e ir ao estado 58
+    token_pr_logico     deslocar, e ir ao estado 59
+    token_pr_matriz     deslocar, e ir ao estado 60
+
+    tipo_primitivo  ir ao estado 167
+    tipo_matriz     ir ao estado 168
+
+
+State 119
+
+  115 paramentros_funcao_parenteses: token_abre_parenteses paramentros_funcao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 115 (paramentros_funcao_parenteses)
+
+
+State 120
+
+  117 paramentros_funcao: paramentros_funcao token_virgula . paramentro_funcao
+
+    token_identificador  deslocar, e ir ao estado 65
+
+    paramentro_funcao  ir ao estado 169
+
+
+State 121
+
+   29 bloco_inicio_funcao: token_pr_inicio token_pr_fim .
+
+    $padrão  reduzir usando a regra 29 (bloco_inicio_funcao)
+
+
+State 122
+
+   28 bloco_inicio_funcao: token_pr_inicio lista_comandos . token_pr_fim
+   30 lista_comandos: lista_comandos . comando
+
+    token_pr_fim         deslocar, e ir ao estado 170
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 123
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo . bloco_inicio_funcao token_pr_fim_funcao
+
+    token_pr_inicio  deslocar, e ir ao estado 68
+
+    bloco_inicio_funcao  ir ao estado 171
+
+
+State 124
+
+  114 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses bloco_inicio_funcao token_pr_fim_funcao .
+
+    $padrão  reduzir usando a regra 114 (declaracao_funcao)
+
+
+State 125
+
+   86 termo_9: token_soma termo_9 .
+
+    $padrão  reduzir usando a regra 86 (termo_9)
+
+
+State 126
+
+   87 termo_9: token_subtracao termo_9 .
+
+    $padrão  reduzir usando a regra 87 (termo_9)
+
+
+State 127
+
+   88 termo_9: token_nao termo_9 .
+
+    $padrão  reduzir usando a regra 88 (termo_9)
+
+
+State 128
+
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+   89 termo_9: token_abre_parenteses expressao . token_fecha_parenteses
+
+    token_pr_ou             deslocar, e ir ao estado 130
+    token_ou                deslocar, e ir ao estado 131
+    token_fecha_parenteses  deslocar, e ir ao estado 172
+
+
+State 129
+
+   51 comando_se: token_pr_se expressao token_pr_entao . lista_comandos token_pr_fim_se
+   52           | token_pr_se expressao token_pr_entao . lista_comandos token_pr_senao lista_comandos token_pr_fim_se
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 173
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 130
+
+   59 expressao: expressao token_pr_ou . termo_1
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_1                 ir ao estado 174
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 131
+
+   60 expressao: expressao token_ou . termo_1
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_1                 ir ao estado 175
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 132
+
+   62 termo_1: termo_1 token_pr_e . termo_2
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_2                 ir ao estado 176
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 133
+
+   63 termo_1: termo_1 token_e . termo_2
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_2                 ir ao estado 177
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 134
+
+   65 termo_2: termo_2 token_ou_bit . termo_3
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_3                 ir ao estado 178
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 135
+
+   67 termo_3: termo_3 token_xor_bit . termo_4
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_4                 ir ao estado 179
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 136
+
+   69 termo_4: termo_4 token_e_bit . termo_5
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_5                 ir ao estado 180
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 137
+
+   71 termo_5: termo_5 token_igual . termo_6
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_6                 ir ao estado 181
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 138
+
+   72 termo_5: termo_5 token_diferente . termo_6
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_6                 ir ao estado 182
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 139
+
+   76 termo_6: termo_6 token_maior . termo_7
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_7                 ir ao estado 183
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 140
+
+   77 termo_6: termo_6 token_maior_igual . termo_7
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_7                 ir ao estado 184
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 141
+
+   74 termo_6: termo_6 token_menor . termo_7
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_7                 ir ao estado 185
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 142
+
+   75 termo_6: termo_6 token_menor_igual . termo_7
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_7                 ir ao estado 186
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 143
+
+   79 termo_7: termo_7 token_soma . termo_8
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_8                 ir ao estado 187
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 144
+
+   80 termo_7: termo_7 token_subtracao . termo_8
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_8                 ir ao estado 188
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 145
+
+   83 termo_8: termo_8 token_divisao . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 189
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 146
+
+   82 termo_8: termo_8 token_multiplicacao . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 190
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 147
+
+   84 termo_8: termo_8 token_modulo . termo_9
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    termo_9                 ir ao estado 191
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 148
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de . expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda token_pr_de . expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 192
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 149
+
+   53 comando_enquanto: token_pr_enquanto expressao token_pr_faca . lista_comandos token_pr_fim_enquanto
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 193
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 150
+
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+  110 paramentros_chamada_funcao: expressao .
+
+    token_pr_ou  deslocar, e ir ao estado 130
+    token_ou     deslocar, e ir ao estado 131
+
+    $padrão  reduzir usando a regra 110 (paramentros_chamada_funcao)
+
+
+State 151
+
+  102 chamada_funcao_interna: token_pr_imprima token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses token_ponto_virgula
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 194
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 152
+
+  103 chamada_funcao_interna: token_pr_leia token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses token_ponto_virgula
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 196
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 153
+
+  105 chamada_funcao_interna: token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses token_ponto_virgula
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 197
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 154
+
+  104 chamada_funcao_interna: token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses token_ponto_virgula
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 198
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 155
+
+  106 chamada_funcao_interna: token_pr_maximo token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 199
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 156
+
+  107 chamada_funcao_interna: token_pr_minimo token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 200
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 157
+
+  108 chamada_funcao_interna: token_pr_media token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 201
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 158
+
+   44 comando_retorne: token_pr_retorne expressao token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 44 (comando_retorne)
+
+
+State 159
+
+  101 chamada_funcao: token_identificador token_abre_parenteses token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 101 (chamada_funcao)
+
+
+State 160
+
+  100 chamada_funcao: token_identificador token_abre_parenteses paramentros_chamada_funcao . token_fecha_parenteses
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao . token_virgula expressao
+
+    token_fecha_parenteses  deslocar, e ir ao estado 202
+    token_virgula           deslocar, e ir ao estado 195
+
+
+State 161
+
+   20 matriz_colchetes: token_abre_colchetes token_inteiro . token_fecha_colchetes
+
+    token_fecha_colchetes  deslocar, e ir ao estado 203
+
+
+State 162
+
+   19 matriz_colchetes: matriz_colchetes token_abre_colchetes . token_inteiro token_fecha_colchetes
+
+    token_inteiro  deslocar, e ir ao estado 204
+
+
+State 163
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses token_identificador . token_fecha_parenteses casos token_pr_fim_escolha
+
+    token_fecha_parenteses  deslocar, e ir ao estado 205
+
+
+State 164
+
+   42 atribuicao: valor_esquerda token_atribuicao expressao . token_ponto_virgula
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_ou          deslocar, e ir ao estado 130
+    token_ou             deslocar, e ir ao estado 131
+    token_ponto_virgula  deslocar, e ir ao estado 206
+
+
+State 165
+
+    8 declaracao_variaveis: declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 8 (declaracao_variaveis)
+
+
+State 166
+
+   18 tipo_matriz: token_pr_matriz matriz_colchetes token_pr_de . tipo_primitivo_plural
+
+    token_pr_inteiros    deslocar, e ir ao estado 207
+    token_pr_caracteres  deslocar, e ir ao estado 208
+    token_pr_reais       deslocar, e ir ao estado 209
+    token_pr_literais    deslocar, e ir ao estado 210
+    token_pr_logicos     deslocar, e ir ao estado 211
+
+    tipo_primitivo_plural  ir ao estado 212
+
+
+State 167
+
+  119 paramentro_funcao: token_identificador token_dois_pontos tipo_primitivo .
+
+    $padrão  reduzir usando a regra 119 (paramentro_funcao)
+
+
+State 168
+
+  120 paramentro_funcao: token_identificador token_dois_pontos tipo_matriz .
+
+    $padrão  reduzir usando a regra 120 (paramentro_funcao)
+
+
+State 169
+
+  117 paramentros_funcao: paramentros_funcao token_virgula paramentro_funcao .
+
+    $padrão  reduzir usando a regra 117 (paramentros_funcao)
+
+
+State 170
+
+   28 bloco_inicio_funcao: token_pr_inicio lista_comandos token_pr_fim .
+
+    $padrão  reduzir usando a regra 28 (bloco_inicio_funcao)
+
+
+State 171
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao . token_pr_fim_funcao
+
+    token_pr_fim_funcao  deslocar, e ir ao estado 213
+
+
+State 172
+
+   89 termo_9: token_abre_parenteses expressao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 89 (termo_9)
+
+
+State 173
+
+   30 lista_comandos: lista_comandos . comando
+   51 comando_se: token_pr_se expressao token_pr_entao lista_comandos . token_pr_fim_se
+   52           | token_pr_se expressao token_pr_entao lista_comandos . token_pr_senao lista_comandos token_pr_fim_se
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_senao       deslocar, e ir ao estado 214
+    token_pr_fim_se      deslocar, e ir ao estado 215
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 174
+
+   59 expressao: expressao token_pr_ou termo_1 .
+   62 termo_1: termo_1 . token_pr_e termo_2
+   63        | termo_1 . token_e termo_2
+
+    token_pr_e  deslocar, e ir ao estado 132
+    token_e     deslocar, e ir ao estado 133
+
+    $padrão  reduzir usando a regra 59 (expressao)
+
+
+State 175
+
+   60 expressao: expressao token_ou termo_1 .
+   62 termo_1: termo_1 . token_pr_e termo_2
+   63        | termo_1 . token_e termo_2
+
+    token_pr_e  deslocar, e ir ao estado 132
+    token_e     deslocar, e ir ao estado 133
+
+    $padrão  reduzir usando a regra 60 (expressao)
+
+
+State 176
+
+   62 termo_1: termo_1 token_pr_e termo_2 .
+   65 termo_2: termo_2 . token_ou_bit termo_3
+
+    token_ou_bit  deslocar, e ir ao estado 134
+
+    $padrão  reduzir usando a regra 62 (termo_1)
+
+
+State 177
+
+   63 termo_1: termo_1 token_e termo_2 .
+   65 termo_2: termo_2 . token_ou_bit termo_3
+
+    token_ou_bit  deslocar, e ir ao estado 134
+
+    $padrão  reduzir usando a regra 63 (termo_1)
+
+
+State 178
+
+   65 termo_2: termo_2 token_ou_bit termo_3 .
+   67 termo_3: termo_3 . token_xor_bit termo_4
+
+    token_xor_bit  deslocar, e ir ao estado 135
+
+    $padrão  reduzir usando a regra 65 (termo_2)
+
+
+State 179
+
+   67 termo_3: termo_3 token_xor_bit termo_4 .
+   69 termo_4: termo_4 . token_e_bit termo_5
+
+    token_e_bit  deslocar, e ir ao estado 136
+
+    $padrão  reduzir usando a regra 67 (termo_3)
+
+
+State 180
+
+   69 termo_4: termo_4 token_e_bit termo_5 .
+   71 termo_5: termo_5 . token_igual termo_6
+   72        | termo_5 . token_diferente termo_6
+
+    token_igual      deslocar, e ir ao estado 137
+    token_diferente  deslocar, e ir ao estado 138
+
+    $padrão  reduzir usando a regra 69 (termo_4)
+
+
+State 181
+
+   71 termo_5: termo_5 token_igual termo_6 .
+   74 termo_6: termo_6 . token_menor termo_7
+   75        | termo_6 . token_menor_igual termo_7
+   76        | termo_6 . token_maior termo_7
+   77        | termo_6 . token_maior_igual termo_7
+
+    token_maior        deslocar, e ir ao estado 139
+    token_maior_igual  deslocar, e ir ao estado 140
+    token_menor        deslocar, e ir ao estado 141
+    token_menor_igual  deslocar, e ir ao estado 142
+
+    $padrão  reduzir usando a regra 71 (termo_5)
+
+
+State 182
+
+   72 termo_5: termo_5 token_diferente termo_6 .
+   74 termo_6: termo_6 . token_menor termo_7
+   75        | termo_6 . token_menor_igual termo_7
+   76        | termo_6 . token_maior termo_7
+   77        | termo_6 . token_maior_igual termo_7
+
+    token_maior        deslocar, e ir ao estado 139
+    token_maior_igual  deslocar, e ir ao estado 140
+    token_menor        deslocar, e ir ao estado 141
+    token_menor_igual  deslocar, e ir ao estado 142
+
+    $padrão  reduzir usando a regra 72 (termo_5)
+
+
+State 183
+
+   76 termo_6: termo_6 token_maior termo_7 .
+   79 termo_7: termo_7 . token_soma termo_8
+   80        | termo_7 . token_subtracao termo_8
+
+    token_soma       deslocar, e ir ao estado 143
+    token_subtracao  deslocar, e ir ao estado 144
+
+    $padrão  reduzir usando a regra 76 (termo_6)
+
+
+State 184
+
+   77 termo_6: termo_6 token_maior_igual termo_7 .
+   79 termo_7: termo_7 . token_soma termo_8
+   80        | termo_7 . token_subtracao termo_8
+
+    token_soma       deslocar, e ir ao estado 143
+    token_subtracao  deslocar, e ir ao estado 144
+
+    $padrão  reduzir usando a regra 77 (termo_6)
+
+
+State 185
+
+   74 termo_6: termo_6 token_menor termo_7 .
+   79 termo_7: termo_7 . token_soma termo_8
+   80        | termo_7 . token_subtracao termo_8
+
+    token_soma       deslocar, e ir ao estado 143
+    token_subtracao  deslocar, e ir ao estado 144
+
+    $padrão  reduzir usando a regra 74 (termo_6)
+
+
+State 186
+
+   75 termo_6: termo_6 token_menor_igual termo_7 .
+   79 termo_7: termo_7 . token_soma termo_8
+   80        | termo_7 . token_subtracao termo_8
+
+    token_soma       deslocar, e ir ao estado 143
+    token_subtracao  deslocar, e ir ao estado 144
+
+    $padrão  reduzir usando a regra 75 (termo_6)
+
+
+State 187
+
+   79 termo_7: termo_7 token_soma termo_8 .
+   82 termo_8: termo_8 . token_multiplicacao termo_9
+   83        | termo_8 . token_divisao termo_9
+   84        | termo_8 . token_modulo termo_9
+
+    token_divisao        deslocar, e ir ao estado 145
+    token_multiplicacao  deslocar, e ir ao estado 146
+    token_modulo         deslocar, e ir ao estado 147
+
+    $padrão  reduzir usando a regra 79 (termo_7)
+
+
+State 188
+
+   80 termo_7: termo_7 token_subtracao termo_8 .
+   82 termo_8: termo_8 . token_multiplicacao termo_9
+   83        | termo_8 . token_divisao termo_9
+   84        | termo_8 . token_modulo termo_9
+
+    token_divisao        deslocar, e ir ao estado 145
+    token_multiplicacao  deslocar, e ir ao estado 146
+    token_modulo         deslocar, e ir ao estado 147
+
+    $padrão  reduzir usando a regra 80 (termo_7)
+
+
+State 189
+
+   83 termo_8: termo_8 token_divisao termo_9 .
+
+    $padrão  reduzir usando a regra 83 (termo_8)
+
+
+State 190
+
+   82 termo_8: termo_8 token_multiplicacao termo_9 .
+
+    $padrão  reduzir usando a regra 82 (termo_8)
+
+
+State 191
+
+   84 termo_8: termo_8 token_modulo termo_9 .
+
+    $padrão  reduzir usando a regra 84 (termo_8)
+
+
+State 192
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao . token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda token_pr_de expressao . token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_ate  deslocar, e ir ao estado 216
+    token_pr_ou   deslocar, e ir ao estado 130
+    token_ou      deslocar, e ir ao estado 131
+
+
+State 193
+
+   30 lista_comandos: lista_comandos . comando
+   53 comando_enquanto: token_pr_enquanto expressao token_pr_faca lista_comandos . token_pr_fim_enquanto
+
+    token_pr_se            deslocar, e ir ao estado 28
+    token_pr_para          deslocar, e ir ao estado 29
+    token_pr_enquanto      deslocar, e ir ao estado 30
+    token_pr_fim_enquanto  deslocar, e ir ao estado 217
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_retorne       deslocar, e ir ao estado 38
+    token_identificador    deslocar, e ir ao estado 39
+    token_pr_escolha       deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 194
+
+  102 chamada_funcao_interna: token_pr_imprima token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 218
+
+
+State 195
+
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao token_virgula . expressao
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 219
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 196
+
+  103 chamada_funcao_interna: token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 220
+
+
+State 197
+
+  105 chamada_funcao_interna: token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 221
+
+
+State 198
+
+  104 chamada_funcao_interna: token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses . token_ponto_virgula
+
+    token_ponto_virgula  deslocar, e ir ao estado 222
+
+
+State 199
+
+  106 chamada_funcao_interna: token_pr_maximo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 106 (chamada_funcao_interna)
+
+
+State 200
+
+  107 chamada_funcao_interna: token_pr_minimo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 107 (chamada_funcao_interna)
+
+
+State 201
+
+  108 chamada_funcao_interna: token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 108 (chamada_funcao_interna)
+
+
+State 202
+
+  100 chamada_funcao: token_identificador token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses .
+
+    $padrão  reduzir usando a regra 100 (chamada_funcao)
+
+
+State 203
+
+   20 matriz_colchetes: token_abre_colchetes token_inteiro token_fecha_colchetes .
+
+    $padrão  reduzir usando a regra 20 (matriz_colchetes)
+
+
+State 204
+
+   19 matriz_colchetes: matriz_colchetes token_abre_colchetes token_inteiro . token_fecha_colchetes
+
+    token_fecha_colchetes  deslocar, e ir ao estado 223
+
+
+State 205
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses token_identificador token_fecha_parenteses . casos token_pr_fim_escolha
+
+    token_pr_caso     deslocar, e ir ao estado 224
+    token_pr_default  deslocar, e ir ao estado 225
+
+    casos  ir ao estado 226
+    caso   ir ao estado 227
+
+
+State 206
+
+   42 atribuicao: valor_esquerda token_atribuicao expressao token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 42 (atribuicao)
+
+
+State 207
+
+   21 tipo_primitivo_plural: token_pr_inteiros .
+
+    $padrão  reduzir usando a regra 21 (tipo_primitivo_plural)
+
+
+State 208
+
+   23 tipo_primitivo_plural: token_pr_caracteres .
+
+    $padrão  reduzir usando a regra 23 (tipo_primitivo_plural)
+
+
+State 209
+
+   22 tipo_primitivo_plural: token_pr_reais .
+
+    $padrão  reduzir usando a regra 22 (tipo_primitivo_plural)
+
+
+State 210
+
+   24 tipo_primitivo_plural: token_pr_literais .
+
+    $padrão  reduzir usando a regra 24 (tipo_primitivo_plural)
+
+
+State 211
+
+   25 tipo_primitivo_plural: token_pr_logicos .
+
+    $padrão  reduzir usando a regra 25 (tipo_primitivo_plural)
+
+
+State 212
+
+   18 tipo_matriz: token_pr_matriz matriz_colchetes token_pr_de tipo_primitivo_plural .
+
+    $padrão  reduzir usando a regra 18 (tipo_matriz)
+
+
+State 213
+
+  113 declaracao_funcao: token_pr_funcao token_identificador paramentros_funcao_parenteses token_dois_pontos tipo_primitivo bloco_inicio_funcao token_pr_fim_funcao .
+
+    $padrão  reduzir usando a regra 113 (declaracao_funcao)
+
+
+State 214
+
+   52 comando_se: token_pr_se expressao token_pr_entao lista_comandos token_pr_senao . lista_comandos token_pr_fim_se
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 228
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 215
+
+   51 comando_se: token_pr_se expressao token_pr_entao lista_comandos token_pr_fim_se .
+
+    $padrão  reduzir usando a regra 51 (comando_se)
+
+
+State 216
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate . expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda token_pr_de expressao token_pr_ate . expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_pr_imprima       deslocar, e ir ao estado 31
+    token_pr_leia          deslocar, e ir ao estado 32
+    token_pr_imprima_ln    deslocar, e ir ao estado 33
+    token_pr_leia_ln       deslocar, e ir ao estado 34
+    token_pr_maximo        deslocar, e ir ao estado 35
+    token_pr_minimo        deslocar, e ir ao estado 36
+    token_pr_media         deslocar, e ir ao estado 37
+    token_pr_verdadeiro    deslocar, e ir ao estado 71
+    token_pr_falso         deslocar, e ir ao estado 72
+    token_inteiro          deslocar, e ir ao estado 73
+    token_real             deslocar, e ir ao estado 74
+    token_caractere        deslocar, e ir ao estado 75
+    token_literal          deslocar, e ir ao estado 76
+    token_soma             deslocar, e ir ao estado 77
+    token_subtracao        deslocar, e ir ao estado 78
+    token_nao              deslocar, e ir ao estado 79
+    token_abre_parenteses  deslocar, e ir ao estado 80
+    token_identificador    deslocar, e ir ao estado 81
+
+    expressao               ir ao estado 229
+    termo_1                 ir ao estado 83
+    termo_2                 ir ao estado 84
+    termo_3                 ir ao estado 85
+    termo_4                 ir ao estado 86
+    termo_5                 ir ao estado 87
+    termo_6                 ir ao estado 88
+    termo_7                 ir ao estado 89
+    termo_8                 ir ao estado 90
+    termo_9                 ir ao estado 91
+    valor_primitivo         ir ao estado 92
+    chamada_funcao          ir ao estado 93
+    chamada_funcao_interna  ir ao estado 94
+
+
+State 217
+
+   53 comando_enquanto: token_pr_enquanto expressao token_pr_faca lista_comandos token_pr_fim_enquanto .
+
+    $padrão  reduzir usando a regra 53 (comando_enquanto)
+
+
+State 218
+
+  102 chamada_funcao_interna: token_pr_imprima token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 102 (chamada_funcao_interna)
+
+
+State 219
+
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+  109 paramentros_chamada_funcao: paramentros_chamada_funcao token_virgula expressao .
+
+    token_pr_ou  deslocar, e ir ao estado 130
+    token_ou     deslocar, e ir ao estado 131
+
+    $padrão  reduzir usando a regra 109 (paramentros_chamada_funcao)
+
+
+State 220
+
+  103 chamada_funcao_interna: token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 103 (chamada_funcao_interna)
+
+
+State 221
+
+  105 chamada_funcao_interna: token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 105 (chamada_funcao_interna)
+
+
+State 222
+
+  104 chamada_funcao_interna: token_pr_leia_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 104 (chamada_funcao_interna)
+
+
+State 223
+
+   19 matriz_colchetes: matriz_colchetes token_abre_colchetes token_inteiro token_fecha_colchetes .
+
+    $padrão  reduzir usando a regra 19 (matriz_colchetes)
+
+
+State 224
+
+   48 caso: token_pr_caso . valor_primitivo token_dois_pontos lista_comandos token_pr_para token_ponto_virgula
+   49     | token_pr_caso . valor_primitivo token_dois_pontos token_pr_para token_ponto_virgula
+
+    token_pr_verdadeiro  deslocar, e ir ao estado 71
+    token_pr_falso       deslocar, e ir ao estado 72
+    token_inteiro        deslocar, e ir ao estado 73
+    token_real           deslocar, e ir ao estado 74
+    token_caractere      deslocar, e ir ao estado 75
+    token_literal        deslocar, e ir ao estado 76
+
+    valor_primitivo  ir ao estado 230
+
+
+State 225
+
+   50 caso: token_pr_default . token_dois_pontos lista_comandos token_pr_para token_ponto_virgula
+
+    token_dois_pontos  deslocar, e ir ao estado 231
+
+
+State 226
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses token_identificador token_fecha_parenteses casos . token_pr_fim_escolha
+   46 casos: casos . caso
+
+    token_pr_caso         deslocar, e ir ao estado 224
+    token_pr_fim_escolha  deslocar, e ir ao estado 232
+    token_pr_default      deslocar, e ir ao estado 225
+
+    caso  ir ao estado 233
+
+
+State 227
+
+   47 casos: caso .
+
+    $padrão  reduzir usando a regra 47 (casos)
+
+
+State 228
+
+   30 lista_comandos: lista_comandos . comando
+   52 comando_se: token_pr_se expressao token_pr_entao lista_comandos token_pr_senao lista_comandos . token_pr_fim_se
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_fim_se      deslocar, e ir ao estado 234
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 229
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao . token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao . passo token_pr_faca lista_comandos token_pr_fim_para
+   59 expressao: expressao . token_pr_ou termo_1
+   60          | expressao . token_ou termo_1
+
+    token_pr_faca   deslocar, e ir ao estado 235
+    token_pr_passo  deslocar, e ir ao estado 236
+    token_pr_ou     deslocar, e ir ao estado 130
+    token_ou        deslocar, e ir ao estado 131
+
+    passo  ir ao estado 237
+
+
+State 230
+
+   48 caso: token_pr_caso valor_primitivo . token_dois_pontos lista_comandos token_pr_para token_ponto_virgula
+   49     | token_pr_caso valor_primitivo . token_dois_pontos token_pr_para token_ponto_virgula
+
+    token_dois_pontos  deslocar, e ir ao estado 238
+
+
+State 231
+
+   50 caso: token_pr_default token_dois_pontos . lista_comandos token_pr_para token_ponto_virgula
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 239
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 232
+
+   45 comando_escolha: token_pr_escolha token_abre_parenteses token_identificador token_fecha_parenteses casos token_pr_fim_escolha .
+
+    $padrão  reduzir usando a regra 45 (comando_escolha)
+
+
+State 233
+
+   46 casos: casos caso .
+
+    $padrão  reduzir usando a regra 46 (casos)
+
+
+State 234
+
+   52 comando_se: token_pr_se expressao token_pr_entao lista_comandos token_pr_senao lista_comandos token_pr_fim_se .
+
+    $padrão  reduzir usando a regra 52 (comando_se)
+
+
+State 235
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca . lista_comandos token_pr_fim_para
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 240
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 236
+
+   56 passo: token_pr_passo . token_inteiro
+   57      | token_pr_passo . token_soma token_inteiro
+   58      | token_pr_passo . token_subtracao token_inteiro
+
+    token_inteiro    deslocar, e ir ao estado 241
+    token_soma       deslocar, e ir ao estado 242
+    token_subtracao  deslocar, e ir ao estado 243
+
+
+State 237
+
+   55 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao passo . token_pr_faca lista_comandos token_pr_fim_para
+
+    token_pr_faca  deslocar, e ir ao estado 244
+
+
+State 238
+
+   48 caso: token_pr_caso valor_primitivo token_dois_pontos . lista_comandos token_pr_para token_ponto_virgula
+   49     | token_pr_caso valor_primitivo token_dois_pontos . token_pr_para token_ponto_virgula
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 245
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 246
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 239
+
+   30 lista_comandos: lista_comandos . comando
+   50 caso: token_pr_default token_dois_pontos lista_comandos . token_pr_para token_ponto_virgula
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 247
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 240
+
+   30 lista_comandos: lista_comandos . comando
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos . token_pr_fim_para
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_fim_para    deslocar, e ir ao estado 248
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 241
+
+   56 passo: token_pr_passo token_inteiro .
+
+    $padrão  reduzir usando a regra 56 (passo)
+
+
+State 242
+
+   57 passo: token_pr_passo token_soma . token_inteiro
+
+    token_inteiro  deslocar, e ir ao estado 249
+
+
+State 243
+
+   58 passo: token_pr_passo token_subtracao . token_inteiro
+
+    token_inteiro  deslocar, e ir ao estado 250
+
+
+State 244
+
+   55 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca . lista_comandos token_pr_fim_para
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    lista_comandos          ir ao estado 251
+    comando                 ir ao estado 42
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 245
+
+   49 caso: token_pr_caso valor_primitivo token_dois_pontos token_pr_para . token_ponto_virgula
+   54 comando_para: token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_ponto_virgula  deslocar, e ir ao estado 252
+    token_identificador  deslocar, e ir ao estado 95
+
+    valor_esquerda  ir ao estado 96
+
+
+State 246
+
+   30 lista_comandos: lista_comandos . comando
+   48 caso: token_pr_caso valor_primitivo token_dois_pontos lista_comandos . token_pr_para token_ponto_virgula
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 253
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 247
+
+   50 caso: token_pr_default token_dois_pontos lista_comandos token_pr_para . token_ponto_virgula
+   54 comando_para: token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_ponto_virgula  deslocar, e ir ao estado 254
+    token_identificador  deslocar, e ir ao estado 95
+
+    valor_esquerda  ir ao estado 96
+
+
+State 248
+
+   54 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para .
+
+    $padrão  reduzir usando a regra 54 (comando_para)
+
+
+State 249
+
+   57 passo: token_pr_passo token_soma token_inteiro .
+
+    $padrão  reduzir usando a regra 57 (passo)
+
+
+State 250
+
+   58 passo: token_pr_passo token_subtracao token_inteiro .
+
+    $padrão  reduzir usando a regra 58 (passo)
+
+
+State 251
+
+   30 lista_comandos: lista_comandos . comando
+   55 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos . token_pr_fim_para
+
+    token_pr_se          deslocar, e ir ao estado 28
+    token_pr_para        deslocar, e ir ao estado 29
+    token_pr_fim_para    deslocar, e ir ao estado 255
+    token_pr_enquanto    deslocar, e ir ao estado 30
+    token_pr_imprima     deslocar, e ir ao estado 31
+    token_pr_leia        deslocar, e ir ao estado 32
+    token_pr_imprima_ln  deslocar, e ir ao estado 33
+    token_pr_leia_ln     deslocar, e ir ao estado 34
+    token_pr_maximo      deslocar, e ir ao estado 35
+    token_pr_minimo      deslocar, e ir ao estado 36
+    token_pr_media       deslocar, e ir ao estado 37
+    token_pr_retorne     deslocar, e ir ao estado 38
+    token_identificador  deslocar, e ir ao estado 39
+    token_pr_escolha     deslocar, e ir ao estado 40
+
+    comando                 ir ao estado 112
+    valor_esquerda          ir ao estado 43
+    atribuicao              ir ao estado 44
+    comando_retorne         ir ao estado 45
+    comando_escolha         ir ao estado 46
+    comando_se              ir ao estado 47
+    comando_enquanto        ir ao estado 48
+    comando_para            ir ao estado 49
+    chamada_funcao          ir ao estado 50
+    chamada_funcao_interna  ir ao estado 51
+
+
+State 252
+
+   49 caso: token_pr_caso valor_primitivo token_dois_pontos token_pr_para token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 49 (caso)
+
+
+State 253
+
+   48 caso: token_pr_caso valor_primitivo token_dois_pontos lista_comandos token_pr_para . token_ponto_virgula
+   54 comando_para: token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao token_pr_faca lista_comandos token_pr_fim_para
+   55             | token_pr_para . valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para
+
+    token_ponto_virgula  deslocar, e ir ao estado 256
+    token_identificador  deslocar, e ir ao estado 95
+
+    valor_esquerda  ir ao estado 96
+
+
+State 254
+
+   50 caso: token_pr_default token_dois_pontos lista_comandos token_pr_para token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 50 (caso)
+
+
+State 255
+
+   55 comando_para: token_pr_para valor_esquerda token_pr_de expressao token_pr_ate expressao passo token_pr_faca lista_comandos token_pr_fim_para .
+
+    $padrão  reduzir usando a regra 55 (comando_para)
+
+
+State 256
+
+   48 caso: token_pr_caso valor_primitivo token_dois_pontos lista_comandos token_pr_para token_ponto_virgula .
+
+    $padrão  reduzir usando a regra 48 (caso)
