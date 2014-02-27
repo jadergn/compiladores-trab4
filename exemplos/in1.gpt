@@ -7,11 +7,12 @@ algoritmo idade;
 
 //variáveis
 variáveis
-	idade,a: inteiro;
+	idade: inteiro;
 fim-variáveis
 
 //inicio do programa
 início
-	idade :=20 / 19 - 18 * 17 + a;
+	idade :=10 + 20 + 30 + 40 - 50 * 60;
+	//idade := 10 + media(idade,a);
 fim
 

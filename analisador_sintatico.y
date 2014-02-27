@@ -6,7 +6,7 @@
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if;
+Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if, *arvore_funcao;
 
 Arvore_pilha *pilha_arvore;
 
@@ -305,9 +305,12 @@ atribuicao
 {
 	
 	var =busca(tab_variaveis,valor_esquerda, escopo);
+	//printf("OI!\n");
+	//arvore_pilha_imprime(pilha_arvore);
 	aux = monta_arvore_atribuicao(pilha_arvore);
+	//printf("OI1!\n");
 	arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
-	//arvore_imprime(arvore_atribuicao);
+	arvore_imprime(arvore_atribuicao);
 	arvore_final = insere_arvore_final(arvore_final,arvore_atribuicao);
 	//printf("\n\n#######################################\n\n");
 	if(get_tipo(var)!=expressao_tipo){
@@ -424,6 +427,7 @@ termo_7
 : termo_7 token_soma termo_8
 {
 	//printf("Soma\n");
+	
 	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","+"));
 }
 | termo_7 token_subtracao termo_8
@@ -459,6 +463,7 @@ termo_9
 | token_identificador
 {
 	//verifica se a variavel foi declarada
+	
 	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
@@ -501,6 +506,7 @@ termo_9
 }
 | chamada_funcao
 {
+	//printf("funcao = %s",funcao);
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
@@ -511,11 +517,13 @@ termo_9
 	}
 	func = inicializa();
 	qtd_parametros=0;
+	
 	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
 	
 }
 | chamada_funcao_interna
 {
+	//printf("aqui!\n");
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
@@ -526,7 +534,10 @@ termo_9
 	}
 	func = inicializa();
 	qtd_parametros=0;
+	//printf("aqui!!!!!\n");
+	//arvore_imprime
 	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
+	//arvore_pilha_imprime(pilha_arvore);
 }
 ;
 
@@ -552,6 +563,15 @@ chamada_funcao
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//nao foi testado ainda
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,funcao);
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
+	
 	v = inicializa();
 	
 }
@@ -567,6 +587,15 @@ chamada_funcao
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//nao foi testado ainda
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,funcao);
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
+	
 	v = inicializa();
 }
 ;
@@ -580,7 +609,15 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"imprima");
+	set_valor_arvore(arvore_funcao,"imprima");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
@@ -592,7 +629,15 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"leia");
+	set_valor_arvore(arvore_funcao,"leia");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
@@ -604,7 +649,15 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"leia_ln");
+	set_valor_arvore(arvore_funcao,"leia_ln");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
@@ -616,7 +669,15 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"imprima_ln");
+	set_valor_arvore(arvore_funcao,"imprima_ln");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
@@ -633,6 +694,14 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,"maximo");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
@@ -649,23 +718,43 @@ chamada_funcao_interna
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,"minimo");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
 | token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	//printf("aquia!!\n");
 	func = busca(tab_funcoes,"media",escopo);
+	
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
-	qtd_parametros =0;	
+		
 	strcpy(funcao,"media");
 	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//arvore_imprime(arvore_funcao);
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	
+	qtd_parametros =0;
+	set_valor_arvore(arvore_funcao,"media");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 }
 ;
@@ -673,6 +762,9 @@ chamada_funcao_interna
 paramentros_chamada_funcao
 : paramentros_chamada_funcao token_virgula expressao
 {
+	//printf("aquiasd1.1\n");
+	//printf("funcao = %s\n",identificador);
+	arvore_funcao = insere_arvore(arvore_funcao,"variavel",identificador);
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
@@ -680,10 +772,16 @@ paramentros_chamada_funcao
 }
 | expressao
 {
+	//printf("aquiasd1.2\n");
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
 	qtd_parametros++;
+	//printf("aquiasd1.4\n");
+	arvore_funcao = insere_arvore(arvore_funcao,"variavel",identificador);
+	//printf("aquiasd1.3\n");
+	//printf("funcao = %s\n",identificador);
+	//printf("aquiasd1.2\n");
 }
 ;
 
@@ -795,6 +893,7 @@ main(){
 	//arvore
 	arvore_final = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
+	arvore_funcao = cria_arvore("funcao","-1");
 	
 	//for(aux=a; aux!=NULL; aux=get_prox(aux)){
 	//	arvore_imprime(aux);

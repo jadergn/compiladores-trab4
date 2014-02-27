@@ -183,6 +183,10 @@ void arvore_imprime(Arvore* a){
                		printf("pai = %s f4 =>",a->valor);
                		arvore_imprime(a->f4);
        			}
+       			/*if(a->prox != NULL){
+       				printf("pai = %s prox =>",a->valor);
+               		arvore_imprime(a->prox);
+       			}*/
        }
 }
 
@@ -295,7 +299,7 @@ Arvore *monta_arvore_atribuicao(Arvore_pilha *pilha){
 		}
 		tam = tamanho_pilha(pilha);
 	}
-	arvore_imprime(pilha->a);
+	//arvore_imprime(pilha->a);
 	return pilha->a;
 }
 
