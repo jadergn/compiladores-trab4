@@ -151,6 +151,14 @@ int set_usada (Lista *l){
 	v= (Variavel*)l->info;
 	v->usada =1; 
 }
+void set_valor (Lista *l, float valor){
+	Variavel *v;
+	v= (Variavel*)l->info;
+	if(v->tipo == 0)
+		v->valor = &valor; 
+	else if(v->tipo == 3)
+		v->valor = &valor; 
+}
 
 void libera (Lista* l){
 	Lista* p=l;
@@ -400,6 +408,13 @@ int get_tipo(Lista* l){
 	Variavel *v;
 	v=(Variavel*)l->info;
 	return v->tipo;
+}
+
+float *get_valor(Lista* l){
+	Variavel *v;
+	v=(Variavel*)l->info;
+	
+	return (float*)v->valor;
 }
 int get_escopo(Lista* l){
 	Variavel *v;

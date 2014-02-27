@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "arvore.h"
+#include "hash.h"
 
 struct arvore{
 	char *tipo;
@@ -100,15 +101,18 @@ Arvore * insere_arvore(Arvore *a, char tipo[], char valor[]){
 Arvore *insere_arvore_final(Arvore *final, Arvore *a){
 	Arvore *aux;
 	aux = final;
-	if (aux ==NULL)
-		aux = a;
+	if (aux ==NULL){
+		//printf("ta vazia!!\n");
+		return a;
+	}	
 	else{	
 		while(aux->prox!=NULL){
 			aux = aux->prox;
 		}
 		aux->prox = a;
+		return final;
 	}
-	return final;
+	
 }
 Arvore *insere_arvore_arvore(Arvore *arvore, Arvore *a){
 	Arvore *aux;
@@ -196,6 +200,71 @@ struct arvore_pilha{
 	Arvore *a;
 	struct arvore_pilha *prox;		
 };
+
+float executa_expressao(Arvore *a){
+	float valor;
+	Arvore *aux;
+	aux = a;
+	if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"+")==0)){
+		valor = executa_expressao(aux->f1) + executa_expressao(aux->f2);
+	}
+	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"-")==0)){
+		valor = executa_expressao(aux->f1) - executa_expressao(aux->f2);
+	}
+	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"*")==0)){
+		valor = executa_expressao(aux->f1) * executa_expressao(aux->f2);
+	}
+	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"/")==0)){
+		valor = executa_expressao(aux->f1) / executa_expressao(aux->f2);
+	}
+	else if((strcmp(aux->tipo,"inteiro")==0)){
+		return atof(a->valor);
+	}
+	else if((strcmp(aux->tipo,"real")==0)){
+		return atof(a->valor);
+	}
+	return valor;
+
+}
+
+
+
+void executa_arvore(Arvore *a, Lista **tab_variaveis){
+	if(strcmp(a->tipo,"atribuicao")==0)
+		executa_atribuicao(a,tab_variaveis);
+	//ir adicionando todas as funcoes de execucao que forem criadas	
+}
+
+void executa_arvore_final(Arvore *arvore_final, Lista **tab_variaveis){
+	Arvore *aux;
+	for(aux=arvore_final; aux!=NULL; aux=aux->prox){
+		executa_arvore(aux,tab_variaveis);
+	}
+}
+
+void executa_atribuicao (Arvore *a,Lista **tab_variaveis){
+	float valor, *v;
+	Arvore *aux;
+	Lista *l;
+	
+	
+	//arvore_imprime(a);
+	aux=a->f2;
+	
+	if((strcmp(aux->tipo,"inteiro")==0) || (strcmp(aux->tipo,"real")==0)){
+		valor = atof(aux->valor);
+		//printf("valor = %s\n",aux->valor);
+	}
+	else{
+		valor = executa_expressao(aux);
+		//printf("valor = %f\n",valor);
+	}
+	l = busca (tab_variaveis, a->f1->valor, 0);
+	set_valor(l,valor);
+	v = get_valor(l);
+}
+
+
 
 Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p){
 	Arvore_pilha *p1,*p2,*p3;
@@ -286,9 +355,9 @@ Arvore *monta_arvore_atribuicao(Arvore_pilha *pilha){
 	while(tam > 1){
 		aux = remove_final_pilha(pilha);
 		if(strcmp(aux->tipo,"expressao")==0){
-			aux_f1 = topo_pilha(pilha);
-			pilha = remove_pilha(pilha);
 			aux_f2 = topo_pilha(pilha);
+			pilha = remove_pilha(pilha);
+			aux_f1 = topo_pilha(pilha);
 			pilha = remove_pilha(pilha);
 			aux->f1 = aux_f1;
 			aux->f2 = aux_f2;
@@ -302,6 +371,8 @@ Arvore *monta_arvore_atribuicao(Arvore_pilha *pilha){
 	//arvore_imprime(pilha->a);
 	return pilha->a;
 }
+
+
 
 void arvore_pilha_imprime(Arvore_pilha *a){
 	Arvore_pilha *aux;

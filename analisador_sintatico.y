@@ -310,14 +310,19 @@ atribuicao
 	aux = monta_arvore_atribuicao(pilha_arvore);
 	//printf("OI1!\n");
 	arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
-	arvore_imprime(arvore_atribuicao);
+	//arvore_imprime(arvore_atribuicao);
 	arvore_final = insere_arvore_final(arvore_final,arvore_atribuicao);
 	//printf("\n\n#######################################\n\n");
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
+	//arvore_imprime(arvore_final);
+	
+	executa_arvore_final(arvore_final,tab_variaveis);
+	//var =busca(tab_variaveis,"idade", escopo);
 	aux = inicializa_arvore();
+	printf("idade = %f\n",*get_valor(var));
 	arvore_atribuicao = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
 	var=inicializa();
