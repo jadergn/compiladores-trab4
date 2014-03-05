@@ -201,21 +201,22 @@ struct arvore_pilha{
 	struct arvore_pilha *prox;		
 };
 
-float executa_expressao(Arvore *a){
+float executa_expressao(Arvore *a, Lista **tab_variaveis){
 	float valor;
 	Arvore *aux;
+	Lista *var;
 	aux = a;
 	if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"+")==0)){
-		valor = executa_expressao(aux->f1) + executa_expressao(aux->f2);
+		valor = executa_expressao(aux->f1,tab_variaveis) + executa_expressao(aux->f2,tab_variaveis);
 	}
 	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"-")==0)){
-		valor = executa_expressao(aux->f1) - executa_expressao(aux->f2);
+		valor = executa_expressao(aux->f1,tab_variaveis) - executa_expressao(aux->f2,tab_variaveis);
 	}
 	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"*")==0)){
-		valor = executa_expressao(aux->f1) * executa_expressao(aux->f2);
+		valor = executa_expressao(aux->f1,tab_variaveis) * executa_expressao(aux->f2,tab_variaveis);
 	}
 	else if((strcmp(aux->tipo,"expressao")==0) && (strcmp(aux->valor,"/")==0)){
-		valor = executa_expressao(aux->f1) / executa_expressao(aux->f2);
+		valor = executa_expressao(aux->f1,tab_variaveis) / executa_expressao(aux->f2,tab_variaveis);
 	}
 	else if((strcmp(aux->tipo,"inteiro")==0)){
 		return atof(a->valor);
@@ -223,31 +224,40 @@ float executa_expressao(Arvore *a){
 	else if((strcmp(aux->tipo,"real")==0)){
 		return atof(a->valor);
 	}
+	else if (strcmp(aux->tipo,"variavel")==0){
+		var = busca(tab_variaveis,aux->valor, 0);
+		//valor = get_valor(var);
+		//printf("aux->valor = %s var = %s = %f\n",aux->valor,get_nome(var),get_valor(var));
+		return get_valor(var);
+	}
 	return valor;
 
 }
 
 
 
-void executa_arvore(Arvore *a, Lista **tab_variaveis){
+Lista** executa_arvore(Arvore *a, Lista **tab_variaveis){
 	if(strcmp(a->tipo,"atribuicao")==0)
-		executa_atribuicao(a,tab_variaveis);
+		return executa_atribuicao(a,tab_variaveis);
 	//ir adicionando todas as funcoes de execucao que forem criadas	
 }
 
 void executa_arvore_final(Arvore *arvore_final, Lista **tab_variaveis){
 	Arvore *aux;
+	Lista **tab;
+	tab = tab_variaveis;
 	for(aux=arvore_final; aux!=NULL; aux=aux->prox){
-		executa_arvore(aux,tab_variaveis);
+		tab = executa_arvore(aux,tab);
 	}
+	
 }
 
-void executa_atribuicao (Arvore *a,Lista **tab_variaveis){
-	float valor, *v;
+Lista** executa_atribuicao (Arvore *a,Lista **tab_variaveis){
+	float valor, v;
 	Arvore *aux;
 	Lista *l;
-	
-	
+	Lista **tab;
+	tab = tab_variaveis;
 	//arvore_imprime(a);
 	aux=a->f2;
 	
@@ -256,17 +266,26 @@ void executa_atribuicao (Arvore *a,Lista **tab_variaveis){
 		//printf("valor = %s\n",aux->valor);
 	}
 	else{
-		valor = executa_expressao(aux);
+		valor = executa_expressao(aux,tab);
 		//printf("valor = %f\n",valor);
 	}
-	l = busca (tab_variaveis, a->f1->valor, 0);
+	l = busca (tab, a->f1->valor, 0);
+	////////////////////////////////////////////////////////////
+	//NAO ESTA GUARDANDO O VALOR NA TABELA HASH, NAO SEI PQ..//
+	////////////////////////////////////////////////////////// 
 	set_valor(l,valor);
+	//Se fizer isso da erro.
+	//l = busca (tab, a->f1->valor, 0);
 	v = get_valor(l);
+	
+	//imprime_hash(tab);
+	printf("*nome = %s valor= %0.2f\n",get_nome(l),v);
+	return tab;
 }
 
 
 
-Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p){
+/*Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p){
 	Arvore_pilha *p1,*p2,*p3;
 	Arvore *a1,*a2,*a3, *aux;
 	p1 = p;
@@ -293,7 +312,7 @@ Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p){
 	}	
 	
 	return a;
-}
+}*/
 
 Arvore_pilha* inicializa_pilha(){
 	return NULL;

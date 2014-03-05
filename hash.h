@@ -17,7 +17,7 @@ void verifica_variavel_usada(Lista** l);
 void verifica (Lista* l);
 int verifica_tipo_parametros_funcao(Lista** h, char funcao[],Lista* l);
 int get_tipo(Lista* l);
-float *get_valor(Lista* l);
+float get_valor(Lista* l);
 int get_escopo(Lista* l);
 int get_usada(Lista* l);
 char* get_nome(Lista* l);

@@ -364,7 +364,7 @@ void imprime (Lista* l){
 		
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d \n",v->nome,v->tipo,v->usada,v->escopo);		
+			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %f\n",v->nome,v->tipo,v->usada,v->escopo,get_valor(l));		
 		}else if(p->tipo ==1){
 			f = (Funcao*)p->info;
 			printf("Funcao: nome = %s retorno = %d aridade = %d --",f->nome, f->retorno, f->aridade);		
@@ -410,11 +410,11 @@ int get_tipo(Lista* l){
 	return v->tipo;
 }
 
-float *get_valor(Lista* l){
+float get_valor(Lista* l){
 	Variavel *v;
 	v=(Variavel*)l->info;
 	
-	return (float*)v->valor;
+	return *(float*)v->valor;
 }
 int get_escopo(Lista* l){
 	Variavel *v;

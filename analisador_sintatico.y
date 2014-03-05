@@ -127,6 +127,9 @@ extern int escopo;
 algoritmo
 : declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal
 | declaracao_algoritmo bloco_variaveis bloco_inicio_principal
+{
+	//imprime_hash(tab_variaveis);
+}
 ;
 
 declaracao_algoritmo
@@ -322,7 +325,7 @@ atribuicao
 	executa_arvore_final(arvore_final,tab_variaveis);
 	//var =busca(tab_variaveis,"idade", escopo);
 	aux = inicializa_arvore();
-	printf("idade = %f\n",*get_valor(var));
+	//printf("--%s = %f\n",get_nome(var),*get_valor(var));
 	arvore_atribuicao = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
 	var=inicializa();

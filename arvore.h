@@ -26,7 +26,7 @@ Arvore* get_f4(Arvore *a);
 Arvore* get_prox(Arvore *a);
 
 
-void executa_arvore(Arvore *a, Lista **tab_variaveis);
+Lista** executa_arvore(Arvore *a, Lista **tab_variaveis);
 void executa_arvore_final(Arvore *arvore_final, Lista **tab_variaveis);
 
 Arvore * insere_arvore(Arvore *a, char tipo[], char valor[]);
@@ -44,7 +44,7 @@ Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p);
 int tamanho_pilha(Arvore_pilha *pilha);
 Arvore *monta_arvore_atribuicao(Arvore_pilha *pilha);
 
-void executa_atribuicao (Arvore *a, Lista **tab_variaveis);
+Lista** executa_atribuicao (Arvore *a, Lista **tab_variaveis);
 
 
 Arvore_pilha* inicializa_pilha();
