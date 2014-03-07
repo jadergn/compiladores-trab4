@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
-
+#include <math.h>
 #define TAM 97
 
 
@@ -154,10 +154,23 @@ int set_usada (Lista *l){
 void set_valor (Lista *l, float valor){
 	Variavel *v;
 	v= (Variavel*)l->info;
-	if(v->tipo == 0)
-		v->valor = &valor; 
-	else if(v->tipo == 3)
-		v->valor = &valor; 
+	if(v->tipo == 0){
+		*(int*)v->valor = (int)valor; 
+	}
+	else if(v->tipo == 3){
+		*(float*)v->valor = valor; 
+	}
+}
+
+void set_valor_string (Lista *l, char *str){
+	Variavel *v;
+	v= (Variavel*)l->info;
+	
+	if(v->tipo == 2 || v->tipo == 1){
+		//printf("passei\n");
+		strcpy((char*)v->valor,str);
+		//printf("passei\n");
+	}
 }
 
 void libera (Lista* l){
@@ -230,7 +243,7 @@ Lista** insere_variavel_hash(Lista** h, Lista* l, int tipo, int escopo){
 }
 //insere uma variavel na tabela hash
 Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo){
-	int pos=0,i=0;
+	int pos=0,i=0,teste=199;
 	char c;
 	Lista* novo = (Lista*) malloc(sizeof(Lista));
 	Variavel* var = (Variavel*) malloc (sizeof(Variavel));
@@ -242,16 +255,21 @@ Lista** insere_variavel (Lista** l, char nome[], int tipo, int usada, int escopo
 	var->tipo = tipo;
 	var->usada = usada;
 	var->escopo = escopo;
-	if(tipo == 0)
+	if(tipo == 0){
+		
 		var->valor = (int*) malloc(sizeof(int));
+		//remover depoisvvv
+		//printf("teste= %d\n",*(int*)var->valor);
+	}
 	else if(tipo == 1)
 		var->valor = (char*) malloc(sizeof(char));
 	else if(tipo == 2)
-		var->valor = (char**) malloc(sizeof(char*));
+		var->valor = (char*) malloc(100*sizeof(char));
 	else if(tipo == 3)
 		var->valor = (float*) malloc(sizeof(float));
 	else if(tipo == 4)
 		var->valor = (int*) malloc(sizeof(int));
+		
 	novo->info = var;
 	novo->tipo = 0;
 	c =nome[i];
@@ -364,7 +382,14 @@ void imprime (Lista* l){
 		
 		if(p->tipo ==0){
 			v = (Variavel*)p->info;
-			printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %f\n",v->nome,v->tipo,v->usada,v->escopo,get_valor(l));		
+			if(v->tipo ==0)
+				printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %d\n",v->nome,v->tipo,v->usada,v->escopo,*(int*)v->valor);		
+			else if	(v->tipo ==1)
+				printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %c\n",v->nome,v->tipo,v->usada,v->escopo,*(char*)v->valor);		
+			else if	(v->tipo ==2)
+				printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %s\n",v->nome,v->tipo,v->usada,v->escopo,(char*)v->valor);	
+			else if	(v->tipo ==3)
+				printf(" Variavel: nome = %s tipo = %d usada = %d escopo = %d valor = %f\n",v->nome,v->tipo,v->usada,v->escopo,*(float*)v->valor);	
 		}else if(p->tipo ==1){
 			f = (Funcao*)p->info;
 			printf("Funcao: nome = %s retorno = %d aridade = %d --",f->nome, f->retorno, f->aridade);		

@@ -8,12 +8,14 @@ algoritmo idade;
 //variáveis
 variáveis
 	idade,b: inteiro;
+	str: literal;
 fim-variáveis
 
 //inicio do programa
 início
-	b := 100 + 1;
-	
-	
+	b := 100 + 10;
+	//a := 100;
+	str := "jader";
+	idade := 180 + b;
 fim
 

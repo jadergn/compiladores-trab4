@@ -22,6 +22,7 @@ int get_escopo(Lista* l);
 int get_usada(Lista* l);
 char* get_nome(Lista* l);
 void set_valor(Lista* l, float valor);
+void set_valor_string (Lista *l, char *str);
 int get_aridade(Lista* l);
 int get_retorno(Lista* l);
 int verifica_tipo(Lista** h, char expressao[], int escopo);

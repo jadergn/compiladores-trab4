@@ -39,6 +39,7 @@ Arvore *topo_pilha (Arvore_pilha *pilha);
 
 
 void arvore_imprime(Arvore* a);
+void arvore_imprime_final(Arvore *a);
 //Arvore* insere_atribuicao(Arvore *a, char variavel[], char tipo[],char valor[]);
 Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p);
 int tamanho_pilha(Arvore_pilha *pilha);

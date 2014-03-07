@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
+/* A Bison parser, made by GNU Bison 2.5.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.7.12-4996"
+#define YYBISON_VERSION "2.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -58,11 +58,14 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
+/* Using locations.  */
+#define YYLSP_NEEDED 0
 
 
 
 /* Copy the first part of user declarations.  */
-/* Line 371 of yacc.c  */
+
+/* Line 268 of yacc.c  */
 #line 1 "analisador_sintatico.y"
 
 #include <stdio.h>
@@ -72,7 +75,7 @@
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if;
+Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if, *arvore_funcao;
 
 Arvore_pilha *pilha_arvore;
 
@@ -94,16 +97,14 @@ extern int num_linha;
 extern char expressao[2000];
 extern int escopo;
 
-/* Line 371 of yacc.c  */
-#line 99 "analisador_sintatico.tab.c"
 
-# ifndef YY_NULL
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULL nullptr
-#  else
-#   define YY_NULL 0
-#  endif
-# endif
+/* Line 268 of yacc.c  */
+#line 103 "analisador_sintatico.tab.c"
+
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
 
 /* Enabling verbose error messages.  */
 #ifdef YYERROR_VERBOSE
@@ -113,14 +114,11 @@ extern int escopo;
 # define YYERROR_VERBOSE 0
 #endif
 
+/* Enabling the token table.  */
+#ifndef YYTOKEN_TABLE
+# define YYTOKEN_TABLE 0
+#endif
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -219,6 +217,7 @@ extern int yydebug;
 #endif
 
 
+
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
@@ -226,28 +225,12 @@ typedef int YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-extern YYSTYPE yylval;
-
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
-
-
 
 /* Copy the second part of user declarations.  */
 
-/* Line 390 of yacc.c  */
-#line 251 "analisador_sintatico.tab.c"
+
+/* Line 343 of yacc.c  */
+#line 234 "analisador_sintatico.tab.c"
 
 #ifdef short
 # undef short
@@ -300,33 +283,24 @@ typedef short int yytype_int16;
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
+#   define YY_(msgid) dgettext ("bison-runtime", msgid)
 #  endif
 # endif
 # ifndef YY_
-#  define YY_(Msgid) Msgid
-# endif
-#endif
-
-#ifndef __attribute__
-/* This feature is available in gcc versions 2.5 and later.  */
-# if (! defined __GNUC__ || __GNUC__ < 2 \
-      || (__GNUC__ == 2 && __GNUC_MINOR__ < 5))
-#  define __attribute__(Spec) /* empty */
+#  define YY_(msgid) msgid
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(E) ((void) (E))
+# define YYUSE(e) ((void) (e))
 #else
-# define YYUSE(E) /* empty */
+# define YYUSE(e) /* empty */
 #endif
-
 
 /* Identity function, used to suppress warnings about constant conditions.  */
 #ifndef lint
-# define YYID(N) (N)
+# define YYID(n) (n)
 #else
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
@@ -362,7 +336,6 @@ YYID (yyi)
 #    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
 #      define EXIT_SUCCESS 0
 #     endif
@@ -454,20 +427,20 @@ union yyalloc
 #endif
 
 #if defined YYCOPY_NEEDED && YYCOPY_NEEDED
-/* Copy COUNT objects from SRC to DST.  The source and destination do
+/* Copy COUNT objects from FROM to TO.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(Dst, Src, Count) \
-      __builtin_memcpy (Dst, Src, (Count) * sizeof (*(Src)))
+#   define YYCOPY(To, From, Count) \
+      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
 #  else
-#   define YYCOPY(Dst, Src, Count)              \
-      do                                        \
-        {                                       \
-          YYSIZE_T yyi;                         \
-          for (yyi = 0; yyi < (Count); yyi++)   \
-            (Dst)[yyi] = (Src)[yyi];            \
-        }                                       \
+#   define YYCOPY(To, From, Count)		\
+      do					\
+	{					\
+	  YYSIZE_T yyi;				\
+	  for (yyi = 0; yyi < (Count); yyi++)	\
+	    (To)[yyi] = (From)[yyi];		\
+	}					\
       while (YYID (0))
 #  endif
 # endif
@@ -606,23 +579,23 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   128,   128,   129,   133,   144,   145,   146,   150,   166,
-     185,   186,   190,   195,   203,   207,   211,   215,   219,   223,
-     227,   228,   232,   233,   234,   235,   236,   241,   246,   250,
-     255,   259,   260,   264,   271,   272,   273,   274,   275,   276,
-     277,   281,   300,   304,   326,   327,   332,   336,   337,   341,
-     342,   343,   348,   349,   353,   357,   358,   362,   363,   364,
-     368,   374,   380,   389,   390,   391,   395,   396,   400,   401,
-     405,   406,   410,   411,   412,   416,   417,   418,   419,   420,
-     424,   429,   434,   438,   444,   450,   451,   455,   456,   457,
-     458,   459,   480,   502,   517,   534,   535,   536,   537,   538,
-     539,   543,   558,   575,   587,   599,   611,   623,   639,   655,
-     674,   681,   691,   692,   696,   710,   719,   725,   734,   735,
-     739,   745
+       0,   128,   128,   129,   138,   149,   150,   151,   155,   172,
+     192,   193,   197,   202,   210,   214,   218,   222,   226,   230,
+     234,   235,   239,   240,   241,   242,   243,   248,   253,   257,
+     262,   266,   267,   271,   278,   279,   280,   281,   282,   283,
+     284,   288,   307,   311,   340,   341,   346,   350,   351,   355,
+     356,   357,   362,   363,   367,   371,   372,   376,   377,   378,
+     382,   388,   394,   403,   404,   405,   409,   410,   414,   415,
+     419,   420,   424,   425,   426,   430,   431,   432,   433,   434,
+     438,   444,   449,   453,   459,   465,   466,   470,   471,   472,
+     473,   474,   496,   518,   535,   556,   557,   558,   559,   560,
+     561,   565,   589,   615,   635,   655,   675,   695,   719,   743,
+     774,   784,   800,   801,   805,   819,   828,   834,   843,   844,
+     848,   854
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || 0
+#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -665,7 +638,7 @@ static const char *const yytname[] =
   "chamada_funcao_interna", "paramentros_chamada_funcao",
   "declaracao_funcoes", "declaracao_funcao",
   "paramentros_funcao_parenteses", "paramentros_funcao",
-  "paramentro_funcao", YY_NULL
+  "paramentro_funcao", 0
 };
 #endif
 
@@ -878,10 +851,10 @@ static const yytype_uint16 yytable[] =
        0,     0,     0,    81
 };
 
-#define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-65)))
+#define yypact_value_is_default(yystate) \
+  ((yystate) == (-65))
 
-#define yytable_value_is_error(Yytable_value) \
+#define yytable_value_is_error(yytable_value) \
   YYID (0)
 
 static const yytype_int16 yycheck[] =
@@ -1009,35 +982,62 @@ static const yytype_uint8 yystos[] =
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                  \
-do                                                              \
-  if (yychar == YYEMPTY)                                        \
-    {                                                           \
-      yychar = (Token);                                         \
-      yylval = (Value);                                         \
-      YYPOPSTACK (yylen);                                       \
-      yystate = *yyssp;                                         \
-      goto yybackup;                                            \
-    }                                                           \
-  else                                                          \
-    {                                                           \
+#define YYBACKUP(Token, Value)					\
+do								\
+  if (yychar == YYEMPTY && yylen == 1)				\
+    {								\
+      yychar = (Token);						\
+      yylval = (Value);						\
+      YYPOPSTACK (1);						\
+      goto yybackup;						\
+    }								\
+  else								\
+    {								\
       yyerror (YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
 
-/* Error token number */
+
 #define YYTERROR	1
 #define YYERRCODE	256
 
 
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)				\
+    do									\
+      if (YYID (N))                                                    \
+	{								\
+	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
+	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
+	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
+	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
+	}								\
+      else								\
+	{								\
+	  (Current).first_line   = (Current).last_line   =		\
+	    YYRHSLOC (Rhs, 0).last_line;				\
+	  (Current).first_column = (Current).last_column =		\
+	    YYRHSLOC (Rhs, 0).last_column;				\
+	}								\
+    while (YYID (0))
+#endif
+
+
 /* This macro is provided for backward compatibility. */
+
 #ifndef YY_LOCATION_PRINT
 # define YY_LOCATION_PRINT(File, Loc) ((void) 0)
 #endif
 
 
 /* YYLEX -- calling `yylex' with the right arguments.  */
+
 #ifdef YYLEX_PARAM
 # define YYLEX yylex (YYLEX_PARAM)
 #else
@@ -1087,8 +1087,6 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
     YYSTYPE const * const yyvaluep;
 #endif
 {
-  FILE *yyo = yyoutput;
-  YYUSE (yyo);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -1097,7 +1095,11 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
 # else
   YYUSE (yyoutput);
 # endif
-  YYUSE (yytype);
+  switch (yytype)
+    {
+      default:
+	break;
+    }
 }
 
 
@@ -1336,11 +1338,12 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (0, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
+  YYSIZE_T yysize1;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULL;
+  const char *yyformat = 0;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1400,13 +1403,11 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                     break;
                   }
                 yyarg[yycount++] = yytname[yyx];
-                {
-                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
-                  if (! (yysize <= yysize1
-                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-                    return 2;
-                  yysize = yysize1;
-                }
+                yysize1 = yysize + yytnamerr (0, yytname[yyx]);
+                if (! (yysize <= yysize1
+                       && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+                  return 2;
+                yysize = yysize1;
               }
         }
     }
@@ -1426,12 +1427,10 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 # undef YYCASE_
     }
 
-  {
-    YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
-    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-      return 2;
-    yysize = yysize1;
-  }
+  yysize1 = yysize + yystrlen (yyformat);
+  if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+    return 2;
+  yysize = yysize1;
 
   if (*yymsg_alloc < yysize)
     {
@@ -1487,26 +1486,36 @@ yydestruct (yymsg, yytype, yyvaluep)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
-  YYUSE (yytype);
+  switch (yytype)
+    {
+
+      default:
+	break;
+    }
 }
 
 
+/* Prevent warnings from -Wmissing-prototypes.  */
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
 
 
 /* The lookahead symbol.  */
 int yychar;
 
-
-#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END
-#endif
-#ifndef YY_INITIAL_VALUE
-# define YY_INITIAL_VALUE(Value) /* Nothing. */
-#endif
-
 /* The semantic value of the lookahead symbol.  */
-YYSTYPE yylval YY_INITIAL_VALUE(yyval_default);
+YYSTYPE yylval;
 
 /* Number of syntax errors so far.  */
 int yynerrs;
@@ -1546,7 +1555,7 @@ yyparse ()
        `yyss': related to states.
        `yyvs': related to semantic values.
 
-       Refer to the stacks through separate pointers, to allow yyoverflow
+       Refer to the stacks thru separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
 
     /* The state stack.  */
@@ -1564,7 +1573,7 @@ yyparse ()
   int yyn;
   int yyresult;
   /* Lookahead token as an internal (translated) token number.  */
-  int yytoken = 0;
+  int yytoken;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
@@ -1582,8 +1591,9 @@ yyparse ()
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
 
-  yyssp = yyss = yyssa;
-  yyvsp = yyvs = yyvsa;
+  yytoken = 0;
+  yyss = yyssa;
+  yyvs = yyvsa;
   yystacksize = YYINITDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
@@ -1592,6 +1602,14 @@ yyparse ()
   yyerrstatus = 0;
   yynerrs = 0;
   yychar = YYEMPTY; /* Cause a token to be read.  */
+
+  /* Initialize stack pointers.
+     Waste one element of value and location stack
+     so that they stay on the same level as the state stack.
+     The wasted elements are never initialized.  */
+  yyssp = yyss;
+  yyvsp = yyvs;
+
   goto yysetstate;
 
 /*------------------------------------------------------------.
@@ -1732,9 +1750,7 @@ yybackup:
   yychar = YYEMPTY;
 
   yystate = yyn;
-  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
   goto yynewstate;
 
@@ -1770,9 +1786,21 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 4:
-/* Line 1787 of yacc.c  */
-#line 134 "analisador_sintatico.y"
+        case 3:
+
+/* Line 1806 of yacc.c  */
+#line 130 "analisador_sintatico.y"
+    {
+	
+	executa_arvore_final(arvore_final,tab_variaveis);
+	imprime_hash(tab_variaveis);
+}
+    break;
+
+  case 4:
+
+/* Line 1806 of yacc.c  */
+#line 139 "analisador_sintatico.y"
     {
 //apagando o vetor expressao
 for(i=0;i<2000;i++){
@@ -1782,8 +1810,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 8:
-/* Line 1787 of yacc.c  */
-#line 151 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 156 "analisador_sintatico.y"
     {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), crio uma lista antes, pois so aqui fica sabendo do tipo das variaveis
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
@@ -1798,12 +1827,14 @@ for(i=0;i<2000;i++){
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
     break;
 
   case 9:
-/* Line 1787 of yacc.c  */
-#line 167 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 173 "analisador_sintatico.y"
     {
 	//insere a lista de variaveis(var) na tabela de variaveis(tab_variaveis), cria uma lista antes pois so aqui fica sabendo do tipo das variaveis
 	tab_variaveis = insere_variavel_hash(tab_variaveis, var, tipo,escopo);
@@ -1818,12 +1849,14 @@ for(i=0;i<2000;i++){
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
     break;
 
   case 12:
-/* Line 1787 of yacc.c  */
-#line 191 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 198 "analisador_sintatico.y"
     {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
@@ -1831,8 +1864,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 13:
-/* Line 1787 of yacc.c  */
-#line 196 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 203 "analisador_sintatico.y"
     {
 	//insere todas as variaveis dentro de uma lista(todas as variaveis tem o mesmo tipo)
 	var = insere_variavel_lista(var,identificador,0);
@@ -1840,40 +1874,45 @@ for(i=0;i<2000;i++){
     break;
 
   case 14:
-/* Line 1787 of yacc.c  */
-#line 204 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 211 "analisador_sintatico.y"
     {
 	retorno_func = 0;
 }
     break;
 
   case 15:
-/* Line 1787 of yacc.c  */
-#line 208 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 215 "analisador_sintatico.y"
     {
 	retorno_func = 3;
 }
     break;
 
   case 16:
-/* Line 1787 of yacc.c  */
-#line 212 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 219 "analisador_sintatico.y"
     {
 	retorno_func = 1;
 }
     break;
 
   case 17:
-/* Line 1787 of yacc.c  */
-#line 216 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 223 "analisador_sintatico.y"
     {
 	retorno_func = 2;
 }
     break;
 
   case 27:
-/* Line 1787 of yacc.c  */
-#line 242 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 249 "analisador_sintatico.y"
     {
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
@@ -1881,8 +1920,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 29:
-/* Line 1787 of yacc.c  */
-#line 251 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 258 "analisador_sintatico.y"
     {
 	//fim do programa, verificas se tem alguma variavel que nao foi utilizada
 	verifica_variavel_usada(tab_variaveis);
@@ -1890,8 +1930,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 33:
-/* Line 1787 of yacc.c  */
-#line 265 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 272 "analisador_sintatico.y"
     {
 	//apaga o vetor de expressao
 	for(i=0;i<2000;i++){
@@ -1901,8 +1942,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 41:
-/* Line 1787 of yacc.c  */
-#line 282 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 289 "analisador_sintatico.y"
     {
 	//verifica se a variavel que estao recebendo atribuicao foi declarada, se sim usada=1, var=NULL nao foi encontrada a variavel, logo ela nao foi declarada
 	var =busca(tab_variaveis,identificador, escopo); 
@@ -1924,12 +1966,16 @@ for(i=0;i<2000;i++){
     break;
 
   case 43:
-/* Line 1787 of yacc.c  */
-#line 305 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 312 "analisador_sintatico.y"
     {
 	
 	var =busca(tab_variaveis,valor_esquerda, escopo);
+	//printf("OI!\n");
+	//arvore_pilha_imprime(pilha_arvore);
 	aux = monta_arvore_atribuicao(pilha_arvore);
+	//printf("OI1!\n");
 	arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
 	//arvore_imprime(arvore_atribuicao);
 	arvore_final = insere_arvore_final(arvore_final,arvore_atribuicao);
@@ -1938,7 +1984,11 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
+	//arvore_imprime_final(arvore_final);
+	//printf("okokok\n");
+	//var =busca(tab_variaveis,"idade", escopo);
 	aux = inicializa_arvore();
+	//printf("--%s = %f\n",get_nome(var),*get_valor(var));
 	arvore_atribuicao = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
 	var=inicializa();
@@ -1947,8 +1997,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 60:
-/* Line 1787 of yacc.c  */
-#line 369 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 383 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1957,8 +2008,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 61:
-/* Line 1787 of yacc.c  */
-#line 375 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 389 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1967,8 +2019,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 62:
-/* Line 1787 of yacc.c  */
-#line 381 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 395 "analisador_sintatico.y"
     {
 	expressao_tipo = pilha_remove(pilha_exp);
 	pilha_destroi(pilha_exp);
@@ -1977,17 +2030,20 @@ for(i=0;i<2000;i++){
     break;
 
   case 80:
-/* Line 1787 of yacc.c  */
-#line 425 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 439 "analisador_sintatico.y"
     {
 	//printf("Soma\n");
+	
 	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","+"));
 }
     break;
 
   case 81:
-/* Line 1787 of yacc.c  */
-#line 430 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 445 "analisador_sintatico.y"
     {
 	//printf("Subtracao\n");
 	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("expressao","-"));
@@ -1995,8 +2051,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 83:
-/* Line 1787 of yacc.c  */
-#line 439 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 454 "analisador_sintatico.y"
     {
 	//printf("Multiplicao\n");
 	
@@ -2005,8 +2062,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 84:
-/* Line 1787 of yacc.c  */
-#line 445 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 460 "analisador_sintatico.y"
     {
 	//printf("Divisao\n");
 	
@@ -2015,10 +2073,12 @@ for(i=0;i<2000;i++){
     break;
 
   case 91:
-/* Line 1787 of yacc.c  */
-#line 460 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 475 "analisador_sintatico.y"
     {
 	//verifica se a variavel foi declarada
+	
 	var =busca(tab_variaveis,identificador, escopo); 
 	if(var == NULL){
 		printf("Erro semantico na linha %d. Variavel nao declarada.\n",num_linha);
@@ -2040,8 +2100,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 92:
-/* Line 1787 of yacc.c  */
-#line 481 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 497 "analisador_sintatico.y"
     {
 	pilha_insere(pilha_exp, tipo);
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
@@ -2066,9 +2127,11 @@ for(i=0;i<2000;i++){
     break;
 
   case 93:
-/* Line 1787 of yacc.c  */
-#line 503 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 519 "analisador_sintatico.y"
     {
+	//printf("funcao = %s",funcao);
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
@@ -2079,15 +2142,18 @@ for(i=0;i<2000;i++){
 	}
 	func = inicializa();
 	qtd_parametros=0;
-	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
+	
+	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
 	
 }
     break;
 
   case 94:
-/* Line 1787 of yacc.c  */
-#line 518 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 536 "analisador_sintatico.y"
     {
+	//printf("aqui!\n");
 	func = busca(tab_funcoes,funcao,escopo);
 	pilha_insere(pilha_exp,get_retorno(func));
 	if(pilha_verifica_compatibilidade(pilha_exp)) {
@@ -2098,13 +2164,17 @@ for(i=0;i<2000;i++){
 	}
 	func = inicializa();
 	qtd_parametros=0;
-	pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
+	//printf("aqui!!!!!\n");
+	//arvore_imprime
+	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
+	//arvore_pilha_imprime(pilha_arvore);
 }
     break;
 
   case 101:
-/* Line 1787 of yacc.c  */
-#line 544 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 566 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
@@ -2116,14 +2186,24 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//nao foi testado ainda
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,funcao);
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
+	
 	v = inicializa();
 	
 }
     break;
 
   case 102:
-/* Line 1787 of yacc.c  */
-#line 559 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 590 "analisador_sintatico.y"
     {
 	func = busca(tab_funcoes,funcao,escopo);
 	if(qtd_parametros != get_aridade(func)){
@@ -2135,13 +2215,23 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//nao foi testado ainda
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,funcao);
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
+	
 	v = inicializa();
 }
     break;
 
   case 103:
-/* Line 1787 of yacc.c  */
-#line 576 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 616 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela, em funcoes o escopo precisa ser colocado mas nao eh usado
 	func = busca(tab_funcoes,"imprima",escopo);
@@ -2149,15 +2239,24 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"imprima");
+	set_valor_arvore(arvore_funcao,"imprima");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 104:
-/* Line 1787 of yacc.c  */
-#line 588 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 636 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia",escopo);
@@ -2165,15 +2264,24 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"leia");
+	set_valor_arvore(arvore_funcao,"leia");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 105:
-/* Line 1787 of yacc.c  */
-#line 600 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 656 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"leia_ln",escopo);
@@ -2181,15 +2289,24 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"leia_ln");
+	set_valor_arvore(arvore_funcao,"leia_ln");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 106:
-/* Line 1787 of yacc.c  */
-#line 612 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 676 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"imprima_ln",escopo);
@@ -2197,15 +2314,24 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
 	strcpy(funcao,"imprima_ln");
+	set_valor_arvore(arvore_funcao,"imprima_ln");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 107:
-/* Line 1787 of yacc.c  */
-#line 624 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 696 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"maximo",escopo);
@@ -2218,14 +2344,23 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,"maximo");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 108:
-/* Line 1787 of yacc.c  */
-#line 640 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 720 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
 	func = busca(tab_funcoes,"minimo",escopo);
@@ -2238,35 +2373,60 @@ for(i=0;i<2000;i++){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	set_valor_arvore(arvore_funcao,"minimo");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 	qtd_parametros =0;	
 }
     break;
 
   case 109:
-/* Line 1787 of yacc.c  */
-#line 656 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 744 "analisador_sintatico.y"
     {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	//printf("aquia!!\n");
 	func = busca(tab_funcoes,"media",escopo);
+	
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
 		exit(0);
 	}
-	qtd_parametros =0;	
+		
 	strcpy(funcao,"media");
 	if(!verifica_tipo_parametros_funcao(tab_funcoes,funcao,v)){
 		printf("Erro semantico na linha %d. Tipo dos parametros invalidos.\n",num_linha);
 		exit(0);
 	}
+	//arvore_imprime(arvore_funcao);
+	for(i=0;i<qtd_parametros;i++){
+		pilha_arvore = remove_pilha(pilha_arvore);
+	}
+	
+	qtd_parametros =0;
+	set_valor_arvore(arvore_funcao,"media");
+	pilha_arvore = insere_pilha(pilha_arvore,arvore_funcao);
+	arvore_funcao = inicializa_arvore();
+	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
 }
     break;
 
   case 110:
-/* Line 1787 of yacc.c  */
-#line 675 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 775 "analisador_sintatico.y"
     {
+	//printf("aquiasd1.1\n");
+	//printf("funcao = %s\n",identificador);
+	arvore_funcao = insere_arvore(arvore_funcao,"variavel",identificador);
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
@@ -2275,19 +2435,27 @@ for(i=0;i<2000;i++){
     break;
 
   case 111:
-/* Line 1787 of yacc.c  */
-#line 682 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 785 "analisador_sintatico.y"
     {
+	//printf("aquiasd1.2\n");
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
 	qtd_parametros++;
+	//printf("aquiasd1.4\n");
+	arvore_funcao = insere_arvore(arvore_funcao,"variavel",identificador);
+	//printf("aquiasd1.3\n");
+	//printf("funcao = %s\n",identificador);
+	//printf("aquiasd1.2\n");
 }
     break;
 
   case 114:
-/* Line 1787 of yacc.c  */
-#line 697 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 806 "analisador_sintatico.y"
     {
 	tipo_parametros[qtd_parametros] = -1;
 	func = busca(tab_funcoes, funcao, escopo);
@@ -2304,8 +2472,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 115:
-/* Line 1787 of yacc.c  */
-#line 711 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 820 "analisador_sintatico.y"
     {
 	tipo_parametros[0] = -1;
 	tab_funcoes = insere_funcao(tab_funcoes,funcao,retorno_func,0);
@@ -2314,8 +2483,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 116:
-/* Line 1787 of yacc.c  */
-#line 720 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 829 "analisador_sintatico.y"
     {
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -2324,8 +2494,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 117:
-/* Line 1787 of yacc.c  */
-#line 726 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 835 "analisador_sintatico.y"
     {
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
@@ -2334,8 +2505,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 120:
-/* Line 1787 of yacc.c  */
-#line 740 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 849 "analisador_sintatico.y"
     {
 	insere_variavel(tab_variaveis,identificador,tipo,0,escopo);
 	tipo_parametros[qtd_parametros] = tipo;
@@ -2344,8 +2516,9 @@ for(i=0;i<2000;i++){
     break;
 
   case 121:
-/* Line 1787 of yacc.c  */
-#line 746 "analisador_sintatico.y"
+
+/* Line 1806 of yacc.c  */
+#line 855 "analisador_sintatico.y"
     {
 	tipo_parametros[qtd_parametros] = tipo;
 	qtd_parametros++;
@@ -2353,8 +2526,9 @@ for(i=0;i<2000;i++){
     break;
 
 
-/* Line 1787 of yacc.c  */
-#line 2358 "analisador_sintatico.tab.c"
+
+/* Line 1806 of yacc.c  */
+#line 2532 "analisador_sintatico.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2517,9 +2691,7 @@ yyerrlab1:
       YY_STACK_PRINT (yyss, yyssp);
     }
 
-  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
 
   /* Shift the error token.  */
@@ -2543,7 +2715,7 @@ yyabortlab:
   yyresult = 1;
   goto yyreturn;
 
-#if !defined yyoverflow || YYERROR_VERBOSE
+#if !defined(yyoverflow) || YYERROR_VERBOSE
 /*-------------------------------------------------.
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
@@ -2585,8 +2757,9 @@ yyreturn:
 }
 
 
-/* Line 2050 of yacc.c  */
-#line 754 "analisador_sintatico.y"
+
+/* Line 2067 of yacc.c  */
+#line 863 "analisador_sintatico.y"
 
 
 #include "lex.yy.c"
@@ -2631,6 +2804,7 @@ main(){
 	//arvore
 	arvore_final = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
+	arvore_funcao = cria_arvore("funcao","-1");
 	
 	//for(aux=a; aux!=NULL; aux=get_prox(aux)){
 	//	arvore_imprime(aux);
@@ -2642,3 +2816,4 @@ main(){
 yyerror (){
 	printf("Erro! Linha %d\n", num_linha);
 }
+

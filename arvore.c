@@ -102,7 +102,6 @@ Arvore *insere_arvore_final(Arvore *final, Arvore *a){
 	Arvore *aux;
 	aux = final;
 	if (aux ==NULL){
-		//printf("ta vazia!!\n");
 		return a;
 	}	
 	else{	
@@ -129,44 +128,7 @@ Arvore *insere_arvore_arvore(Arvore *arvore, Arvore *a){
 	return aux;				
 		
 }
-//talvez nao use essa funcao
-/*Arvore* insere_atribuicao(Arvore *a, char variavel[], char tipo[],char valor[]){
-	Arvore *arv_atr,  *arv_var, *arv_val, *aux ;
-	arv_atr = (Arvore*) malloc(sizeof(Arvore));
-	arv_var = (Arvore*) malloc(sizeof(Arvore));
-	arv_val = (Arvore*) malloc(sizeof(Arvore));
-	
-	arv_atr->tipo = (char*) malloc ((strlen("atribuicao")+1)*sizeof(char)); 
-	arv_atr->valor = (char*) malloc ((strlen(":=")+1)*sizeof(char));
-	strcpy(arv_atr->tipo,"atribuicao");
-	strcpy(arv_atr->valor,":=");
-	
-	arv_val->tipo = (char*) malloc ((strlen(tipo)+1)*sizeof(char)); 
-	arv_val->valor = (char*) malloc ((strlen(valor)+1)*sizeof(char));
-	strcpy(arv_val->tipo,tipo);
-	strcpy(arv_val->valor,valor);
-	
-	arv_var->tipo = (char*) malloc ((strlen("variavel")+1)*sizeof(char)); 
-	arv_var->valor = (char*) malloc ((strlen(variavel)+1)*sizeof(char));
-	strcpy(arv_var->tipo,"variavel");
-	strcpy(arv_var->valor,variavel);
-	
-	arv_atr->f1 = arv_var;
-	arv_atr->f2 = arv_val;
-	arv_atr->f3 = NULL;
-	arv_atr->f4 = NULL;
-	arv_atr->prox = NULL;
-	if(a==NULL){
-		a = arv_atr;
-	}
-	else{
-		for(aux = a; aux->prox!=NULL;aux = aux->prox){
-			
-		}
-		aux->prox = arv_atr;	
-	}	
-	return a;
-}*/
+
 
 void arvore_imprime(Arvore* a){
        	if (a!=NULL){
@@ -187,13 +149,14 @@ void arvore_imprime(Arvore* a){
                		printf("pai = %s f4 =>",a->valor);
                		arvore_imprime(a->f4);
        			}
-       			/*if(a->prox != NULL){
-       				printf("pai = %s prox =>",a->valor);
-               		arvore_imprime(a->prox);
-       			}*/
        }
 }
-
+void arvore_imprime_final(Arvore *a){
+	Arvore *aux;
+	for(aux=a;aux!=NULL;aux=aux->prox){
+		arvore_imprime(aux);
+	}
+}
 
 
 struct arvore_pilha{
@@ -225,9 +188,9 @@ float executa_expressao(Arvore *a, Lista **tab_variaveis){
 		return atof(a->valor);
 	}
 	else if (strcmp(aux->tipo,"variavel")==0){
+		
 		var = busca(tab_variaveis,aux->valor, 0);
-		//valor = get_valor(var);
-		//printf("aux->valor = %s var = %s = %f\n",aux->valor,get_nome(var),get_valor(var));
+		//NAO ESTA ATUALIZANDO O VALOR DA VARIAVEL QUANDO ENTRA AQUI
 		return get_valor(var);
 	}
 	return valor;
@@ -237,8 +200,9 @@ float executa_expressao(Arvore *a, Lista **tab_variaveis){
 
 
 Lista** executa_arvore(Arvore *a, Lista **tab_variaveis){
-	if(strcmp(a->tipo,"atribuicao")==0)
-		return executa_atribuicao(a,tab_variaveis);
+	if(strcmp(a->tipo,"atribuicao")==0){
+		return executa_atribuicao(a,tab_variaveis);;
+	}
 	//ir adicionando todas as funcoes de execucao que forem criadas	
 }
 
@@ -248,6 +212,7 @@ void executa_arvore_final(Arvore *arvore_final, Lista **tab_variaveis){
 	tab = tab_variaveis;
 	for(aux=arvore_final; aux!=NULL; aux=aux->prox){
 		tab = executa_arvore(aux,tab);
+
 	}
 	
 }
@@ -263,56 +228,26 @@ Lista** executa_atribuicao (Arvore *a,Lista **tab_variaveis){
 	
 	if((strcmp(aux->tipo,"inteiro")==0) || (strcmp(aux->tipo,"real")==0)){
 		valor = atof(aux->valor);
-		//printf("valor = %s\n",aux->valor);
+		l = busca (tab, a->f1->valor, 0);
+		set_valor(l,valor);
+		return tab;
 	}
+	else if ((strcmp(aux->tipo,"literal")==0) || (strcmp(aux->tipo,"caracter")==0)){
+		char *str;
+		str = (char*) malloc ((strlen(aux->valor)+1)*sizeof(char));
+		strcpy(str,aux->valor);
+		l = busca (tab, a->f1->valor, 0);
+		set_valor_string(l,str);
+		return tab;
+	}
+		
 	else{
 		valor = executa_expressao(aux,tab);
-		//printf("valor = %f\n",valor);
 	}
 	l = busca (tab, a->f1->valor, 0);
-	////////////////////////////////////////////////////////////
-	//NAO ESTA GUARDANDO O VALOR NA TABELA HASH, NAO SEI PQ..//
-	////////////////////////////////////////////////////////// 
 	set_valor(l,valor);
-	//Se fizer isso da erro.
-	//l = busca (tab, a->f1->valor, 0);
-	v = get_valor(l);
-	
-	//imprime_hash(tab);
-	printf("*nome = %s valor= %0.2f\n",get_nome(l),v);
 	return tab;
 }
-
-
-
-/*Arvore * insere_pilha_arvore_atribuicao(Arvore *a, Arvore_pilha *p){
-	Arvore_pilha *p1,*p2,*p3;
-	Arvore *a1,*a2,*a3, *aux;
-	p1 = p;
-	a1 = p->a;
-	p2 = p1->prox;
-	a2 = p2->a;
-	p3 = p2->prox;
-	a3 = p3->a;
-	if(strcmp(a3->valor,":=")==0){
-		a3->f1 = a2;
-		a3->f2 = a1;
-	}
-	else{
-		//IMPLEMENTAR A ATRIBUICAO COM EXPRESSAO AQUI
-	}
-	if(a==NULL){
-		a = a3;
-	}
-	else{
-		for(aux = a; aux->prox!=NULL;aux = aux->prox){
-			
-		}
-		aux->prox = a3;	
-	}	
-	
-	return a;
-}*/
 
 Arvore_pilha* inicializa_pilha(){
 	return NULL;
@@ -320,12 +255,11 @@ Arvore_pilha* inicializa_pilha(){
 
 Arvore_pilha* insere_pilha(Arvore_pilha *pilha, Arvore *a){
 	Arvore_pilha *nova;
-	//printf("aqui2\n");
 	nova =  (Arvore_pilha*) malloc(sizeof(Arvore_pilha));
-	//nova->a =  (Arvore*) malloc(sizeof(Arvore));
+
 	nova->a = a;
 	nova->prox = pilha;
-	//printf("aqui1\n");
+
 	return nova;
 	
 }
@@ -338,10 +272,6 @@ Arvore *topo_pilha (Arvore_pilha *pilha){
 	Arvore_pilha *p, *aux;
 	Arvore *a;
 	a = pilha->a;
-	//aux = pilha;
-	//pilha = inicializa_pilha();
-	//pilha = aux->prox;
-	//pilha = pilha->prox;
 	return a;
 	
 }
@@ -387,7 +317,6 @@ Arvore *monta_arvore_atribuicao(Arvore_pilha *pilha){
 		}
 		tam = tamanho_pilha(pilha);
 	}
-	//arvore_imprime(pilha->a);
 	return pilha->a;
 }
 

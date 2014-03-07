@@ -128,7 +128,9 @@ algoritmo
 : declaracao_algoritmo declaracao_funcoes bloco_variaveis bloco_inicio_principal
 | declaracao_algoritmo bloco_variaveis bloco_inicio_principal
 {
-	//imprime_hash(tab_variaveis);
+	
+	executa_arvore_final(arvore_final,tab_variaveis);
+	imprime_hash(tab_variaveis);
 }
 ;
 
@@ -165,6 +167,7 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
 | declaracao_variaveis lista_variaveis token_dois_pontos tipo_variavel token_ponto_virgula
 {
@@ -181,6 +184,7 @@ declaracao_variaveis
 	for(i=0;i<2000;i++){
 		expressao[i]='\0';
 	}
+	//imprime_hash(tab_variaveis);
 }
 ;
 
@@ -320,9 +324,8 @@ atribuicao
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
-	//arvore_imprime(arvore_final);
-	
-	executa_arvore_final(arvore_final,tab_variaveis);
+	//arvore_imprime_final(arvore_final);
+	//printf("okokok\n");
 	//var =busca(tab_variaveis,"idade", escopo);
 	aux = inicializa_arvore();
 	//printf("--%s = %f\n",get_nome(var),*get_valor(var));
