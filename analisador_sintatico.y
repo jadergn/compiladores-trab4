@@ -6,7 +6,7 @@
 Lista **tab_variaveis, **tab_funcoes;
 Lista *var, *func, *l, *v;
 
-Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if, *arvore_funcao;
+Arvore *arvore_final, *arvore_atribuicao,*aux, *arvore_if, *arvore_funcao, *arvore_func_interna;
 
 Arvore_pilha *pilha_arvore;
 
@@ -14,7 +14,7 @@ Arvore_pilha *pilha_arvore;
 Pilha *pilha_exp;
 int expressao_tipo;
 
-int i;
+int i, func_inter;
 int qtd_parametros;
 int tipo_parametros[10];
 int retorno_func;
@@ -311,24 +311,21 @@ atribuicao
 : valor_esquerda token_atribuicao expressao token_ponto_virgula
 {
 	
-	var =busca(tab_variaveis,valor_esquerda, escopo);
-	//printf("OI!\n");
-	//arvore_pilha_imprime(pilha_arvore);
+	var = busca(tab_variaveis,valor_esquerda, escopo);
 	aux = monta_arvore_atribuicao(pilha_arvore);
-	//printf("OI1!\n");
-	arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
-	//arvore_imprime(arvore_atribuicao);
+	if(func_inter == 1 ){
+		arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, arvore_func_interna);
+		func_inter=0;	
+		arvore_func_interna = inicializa_arvore();
+	}else
+		arvore_atribuicao = insere_arvore_arvore(arvore_atribuicao, aux);
 	arvore_final = insere_arvore_final(arvore_final,arvore_atribuicao);
-	//printf("\n\n#######################################\n\n");
+	//arvore_imprime_final(arvore_final);
 	if(get_tipo(var)!=expressao_tipo){
 		printf("Erro semantico na linha %d. Tipo de atribuicao invalida.\n",num_linha);
 		exit(0);
 	}
-	//arvore_imprime_final(arvore_final);
-	//printf("okokok\n");
-	//var =busca(tab_variaveis,"idade", escopo);
 	aux = inicializa_arvore();
-	//printf("--%s = %f\n",get_nome(var),*get_valor(var));
 	arvore_atribuicao = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
 	var=inicializa();
@@ -504,11 +501,21 @@ termo_9
 	}
 	if (tipo ==0)
 		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("inteiro",yytext));
-	else if (tipo ==1)
-		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("caracter",yytext));
-	else if (tipo ==2)
-		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("literal",yytext));	
-	else if (tipo ==3)
+	else if (tipo ==1){
+		char c = yytext[1]; 
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("caracter",&c));
+		
+	}else if (tipo ==2){
+		//yytext[0] = 0;
+		int i;
+		char c[100];
+		yytext[strlen(yytext)-1] = '\0';
+		for(i=1;yytext[i]!='\0';i++){
+			c[i-1] = yytext[i];
+		}
+		c[i]='\0';
+		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("literal",c));	
+	}else if (tipo ==3)
 		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("real",yytext));	
 	else if (tipo ==4)
 		pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("booleano",yytext));	
@@ -549,6 +556,8 @@ termo_9
 	//arvore_imprime
 	//pilha_arvore = insere_pilha(pilha_arvore,cria_arvore("funcao",funcao));
 	//arvore_pilha_imprime(pilha_arvore);
+	if(func_inter != 1)
+		arvore_func_interna = inicializa_arvore();
 }
 ;
 
@@ -615,6 +624,9 @@ chamada_funcao_interna
 : token_pr_imprima token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela, em funcoes o escopo precisa ser colocado mas nao eh usado
+	arvore_func_interna = cria_arvore("funcao","imprima");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_final = insere_arvore_final(arvore_final,arvore_func_interna);
 	func = busca(tab_funcoes,"imprima",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
@@ -635,6 +647,9 @@ chamada_funcao_interna
 | token_pr_leia token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	arvore_func_interna = cria_arvore("funcao","leia");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_final = insere_arvore_final(arvore_final,arvore_func_interna);
 	func = busca(tab_funcoes,"leia",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
@@ -675,6 +690,9 @@ chamada_funcao_interna
 | token_pr_imprima_ln token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses token_ponto_virgula
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	arvore_func_interna = cria_arvore("funcao","imprima_ln");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_final = insere_arvore_final(arvore_final,arvore_func_interna);
 	func = busca(tab_funcoes,"imprima_ln",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
@@ -695,6 +713,11 @@ chamada_funcao_interna
 | token_pr_maximo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	arvore_func_interna = cria_arvore("funcao","maximo");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_func_interna = insere_arvore_arvore(arvore_func_interna,aux);
+	func_inter = 1;
+	
 	func = busca(tab_funcoes,"maximo",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
@@ -714,11 +737,16 @@ chamada_funcao_interna
 	arvore_funcao = inicializa_arvore();
 	arvore_funcao = cria_arvore("funcao","-1");
 	v = inicializa();
-	qtd_parametros =0;	
+	qtd_parametros = 0;	
 }
 | token_pr_minimo token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
+	arvore_func_interna = cria_arvore("funcao","minimo");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_func_interna = insere_arvore_arvore(arvore_func_interna,aux);
+	func_inter = 1;
+	
 	func = busca(tab_funcoes,"minimo",escopo);
 	if (qtd_parametros != get_aridade(func)){
 		printf("Erro semantico na linha %d. Quantidade de parametros invalidos.\n",num_linha);
@@ -743,7 +771,12 @@ chamada_funcao_interna
 | token_pr_media token_abre_parenteses paramentros_chamada_funcao token_fecha_parenteses 
 {
 	//busca a funcao imprima na tabela de funcoes e verifica se a quantidade de parametros que a funcao esta recebendo, eh a mesma que foi declarada na tabela
-	//printf("aquia!!\n");
+	
+	arvore_func_interna = cria_arvore("funcao","media");
+	arvore_func_interna = insere_arvore(arvore_func_interna,"variavel",identificador);
+	arvore_func_interna = insere_arvore_arvore(arvore_func_interna,aux);
+	func_inter = 1;
+	
 	func = busca(tab_funcoes,"media",escopo);
 	
 	if (qtd_parametros != get_aridade(func)){
@@ -779,10 +812,18 @@ paramentros_chamada_funcao
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
 	v = insere_variavel_lista1(v,identificador,get_tipo(l),get_escopo(l),get_usada(l));
+	if(qtd_parametros ==0){
+		aux = inicializa_arvore();
+		aux = cria_arvore("variavel",identificador);
+	}
 	qtd_parametros++;
 }
 | expressao
 {
+	if(qtd_parametros ==0){
+		aux = inicializa_arvore();
+		aux = cria_arvore("variavel",identificador);
+	}
 	//printf("aquiasd1.2\n");
 	//conta quantos parametros a funcao esta recebendo
 	l = busca(tab_variaveis,identificador,escopo);
@@ -793,6 +834,7 @@ paramentros_chamada_funcao
 	//printf("aquiasd1.3\n");
 	//printf("funcao = %s\n",identificador);
 	//printf("aquiasd1.2\n");
+	
 }
 ;
 
@@ -904,6 +946,7 @@ main(){
 	//arvore
 	arvore_final = inicializa_arvore();
 	pilha_arvore = inicializa_pilha();
+	arvore_func_interna = inicializa_arvore();
 	arvore_funcao = cria_arvore("funcao","-1");
 	
 	//for(aux=a; aux!=NULL; aux=get_prox(aux)){

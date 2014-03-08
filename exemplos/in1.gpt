@@ -7,15 +7,19 @@ algoritmo idade;
 
 //variáveis
 variáveis
-	idade,b: inteiro;
+	idade,b,d: inteiro;
+	r: real;
+	c : caractere;
 	str: literal;
 fim-variáveis
 
 //inicio do programa
 início
 	b := 100 + 10;
-	//a := 100;
-	str := "jader";
-	idade := 180 + b;
+	d := 10;
+	idade := 20;
+	b := media (d,idade);
+	c := 'a';
+	
 fim
 

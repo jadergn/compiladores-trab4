@@ -435,11 +435,29 @@ int get_tipo(Lista* l){
 	return v->tipo;
 }
 
-float get_valor(Lista* l){
+float get_valor_float(Lista* l){
 	Variavel *v;
-	v=(Variavel*)l->info;
-	
+	v = (Variavel*)l->info;
+	//imprime(l);
 	return *(float*)v->valor;
+}
+float get_valor_int(Lista* l){
+	Variavel *v;
+	v = (Variavel*)l->info;
+	//imprime(l);
+	return *(int*)v->valor;
+}
+char get_valor_char(Lista* l){
+	Variavel *v;
+	v = (Variavel*)l->info;
+	//imprime(l);
+	return *(char*)v->valor;
+}
+char* get_valor_string(Lista* l){
+	Variavel *v;
+	v = (Variavel*)l->info;
+	//imprime(l);
+	return (char*)v->valor;
 }
 int get_escopo(Lista* l){
 	Variavel *v;

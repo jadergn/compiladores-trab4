@@ -187,21 +187,127 @@ float executa_expressao(Arvore *a, Lista **tab_variaveis){
 	else if((strcmp(aux->tipo,"real")==0)){
 		return atof(a->valor);
 	}
+	else if((strcmp(aux->tipo,"funcao")==0)){
+		int ret;
+		if(strcmp(aux->valor,"maximo")==0){
+			ret = executa_maximo (aux,tab_variaveis);
+		}
+		if(strcmp(aux->valor,"minimo")==0){
+			ret = executa_minimo (aux,tab_variaveis);
+		}
+		if(strcmp(aux->valor,"media")==0){
+			ret = executa_media (aux,tab_variaveis);
+		}
+		return ret;
+	}
 	else if (strcmp(aux->tipo,"variavel")==0){
 		
 		var = busca(tab_variaveis,aux->valor, 0);
-		//NAO ESTA ATUALIZANDO O VALOR DA VARIAVEL QUANDO ENTRA AQUI
-		return get_valor(var);
+		if(get_tipo(var)==0)
+			return get_valor_int(var);	
+		else if(get_tipo(var)==3)
+			return get_valor_float(var);	
 	}
 	return valor;
 
 }
 
+void executa_imprima(Arvore *a, Lista **tab_variaveis){
+	Lista *l;
+	
+	
+	l = busca (tab_variaveis, a->f1->valor, 0);
+	if(get_tipo(l) == 0){
+		int valor;
+		valor = get_valor_int(l);
+		printf("%d",valor);
+	}
+	if(get_tipo(l) == 1){
+		char valor;
+		valor = get_valor_char(l);
+		printf("%c",valor);
+	}
+	if(get_tipo(l) == 2){
+		char* valor;
+		valor = get_valor_string(l);
+		printf("%s",valor);
+	}
+	if(get_tipo(l) == 3){
+		float valor;
+		valor = get_valor_float(l);
+		printf("%f",valor);
+	}
+}
 
+void executa_imprima_ln(Arvore *a, Lista **tab_variaveis){
+	Lista *l;
+	
+	
+	l = busca (tab_variaveis, a->f1->valor, 0);
+	if(get_tipo(l) == 0){
+		int valor;
+		valor = get_valor_int(l);
+		printf("%d\n",valor);
+	}
+	if(get_tipo(l) == 1){
+		char valor;
+		valor = get_valor_char(l);
+		printf("%c\n",valor);
+	}
+	if(get_tipo(l) == 2){
+		char* valor;
+		valor = get_valor_string(l);
+		printf("%s\n",valor);
+	}
+	if(get_tipo(l) == 3){
+		float valor;
+		valor = get_valor_float(l);
+		printf("%f\n",valor);
+	}
+}
 
+void executa_leia(Arvore *a,Lista **tab_variaveis){
+	Lista *l;
+	l = busca (tab_variaveis, a->f1->valor, 0);
+	if(get_tipo(l) == 0){
+		int valor;
+		scanf("%d",&valor);
+		set_valor(l,valor);
+	}
+	if(get_tipo(l) == 1){
+		char valor;
+		scanf("%c",&valor);
+		set_valor_string(l,&valor);
+	}
+	if(get_tipo(l) == 2){
+		char* valor;
+		scanf("%s",valor);
+		set_valor_string(l,valor);
+	}
+	if(get_tipo(l) == 3){
+		float valor;
+		scanf("%f",&valor);
+		set_valor(l,valor);
+	}
+}
 Lista** executa_arvore(Arvore *a, Lista **tab_variaveis){
 	if(strcmp(a->tipo,"atribuicao")==0){
 		return executa_atribuicao(a,tab_variaveis);;
+	}
+	else if(strcmp(a->tipo,"funcao")==0){
+		if(strcmp(a->valor,"imprima")==0){
+			executa_imprima(a,tab_variaveis);
+			return tab_variaveis;
+		}
+		if(strcmp(a->valor,"imprima_ln")==0){
+			executa_imprima_ln(a,tab_variaveis);
+			return tab_variaveis;
+		}
+		if(strcmp(a->valor,"leia")==0){
+			executa_leia(a,tab_variaveis);
+			return tab_variaveis;
+		}
+		
 	}
 	//ir adicionando todas as funcoes de execucao que forem criadas	
 }
@@ -216,14 +322,40 @@ void executa_arvore_final(Arvore *arvore_final, Lista **tab_variaveis){
 	}
 	
 }
-
+int executa_maximo(Arvore *a, Lista **tab){
+	Lista *l1, *l2;
+	l1 = busca(tab,a->f1->valor,0);
+	l2 = busca(tab,a->f2->valor,0);
+	if(get_valor_int(l1)>get_valor_int(l2)){
+		return get_valor_int(l1);
+	}
+	else{
+		return get_valor_int(l2);
+	}
+}
+int executa_minimo(Arvore *a, Lista **tab){
+	Lista *l1, *l2;
+	l1 = busca(tab,a->f1->valor,0);
+	l2 = busca(tab,a->f2->valor,0);
+	if(get_valor_int(l1)<get_valor_int(l2)){
+		return get_valor_int(l1);
+	}
+	else{
+		return get_valor_int(l2);
+	}
+}
+int executa_media(Arvore *a, Lista **tab){
+	Lista *l1, *l2;
+	l1 = busca(tab,a->f1->valor,0);
+	l2 = busca(tab,a->f2->valor,0);
+	return (get_valor_int(l1)+get_valor_int(l2))/2;
+}
 Lista** executa_atribuicao (Arvore *a,Lista **tab_variaveis){
 	float valor, v;
 	Arvore *aux;
 	Lista *l;
 	Lista **tab;
 	tab = tab_variaveis;
-	//arvore_imprime(a);
 	aux=a->f2;
 	
 	if((strcmp(aux->tipo,"inteiro")==0) || (strcmp(aux->tipo,"real")==0)){
@@ -240,7 +372,21 @@ Lista** executa_atribuicao (Arvore *a,Lista **tab_variaveis){
 		set_valor_string(l,str);
 		return tab;
 	}
-		
+	else if ((strcmp(aux->tipo,"funcao")==0)){
+		int ret;
+		if(strcmp(aux->valor,"maximo")==0){
+			ret = executa_maximo (aux,tab);
+		}
+		if(strcmp(aux->valor,"minimo")==0){
+			ret = executa_minimo (aux,tab);
+		}
+		if(strcmp(aux->valor,"media")==0){
+			ret = executa_media (aux,tab);
+		}
+		l = busca (tab, a->f1->valor, 0);
+		set_valor(l,ret);
+		return tab;
+	}
 	else{
 		valor = executa_expressao(aux,tab);
 	}
